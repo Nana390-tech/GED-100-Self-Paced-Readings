@@ -1,197 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { BookOpen, Award, Download, Upload, CheckCircle, XCircle, RotateCcw, Home, Book, FileText } from 'lucide-react';
-
-const ReadingComprehensionHub = () => {
-  const [currentReading, setCurrentReading] = useState(null);
-  const [currentSection, setCurrentSection] = useState(null);
-  const [showReading, setShowReading] = useState(false);
-  const [currentParagraph, setCurrentParagraph] = useState(null);
-  const [progress, setProgress] = useState({
-    reading1: { vocab: 0, comprehension: 0 },
-    reading2: { vocab: 0, comprehension: 0 },
-    reading3: { vocab: 0, comprehension: 0 }
-  });
-  const [currentActivity, setCurrentActivity] = useState(null);
-  const [userAnswers, setUserAnswers] = useState({});
-  const [showResults, setShowResults] = useState(false);
-  const [activityScore, setActivityScore] = useState(0);
-  const [cardIndex, setCardIndex] = useState(0);
-  const [flipped, setFlipped] = useState(false);
-
-  useEffect(() => {
-    const saved = localStorage.getItem('readingProgress');
-    if (saved) {
-      setProgress(JSON.parse(saved));
-    }
-  }, []);
-
-  useEffect(() => {
-    if (currentActivity !== 'flashcards') {
-      setCardIndex(0);
-      setFlipped(false);
-    }
-    if (currentActivity === null || currentSection === null) {
-      setUserAnswers({});
-      setShowResults(false);
-      setActivityScore(0);
-    }
-  }, [currentActivity, currentSection]);
-
-  const saveProgress = (newProgress) => {
-    setProgress(newProgress);
-    localStorage.setItem('readingProgress', JSON.stringify(newProgress));
-  };
-
-  const exportProgress = () => {
-    const dataStr = JSON.stringify(progress, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
-    const url = URL.createObjectURL(dataBlob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'reading-progress.json';
-    link.click();
-  };
-
-  const importProgress = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        try {
-          const imported = JSON.parse(e.target.result);
-          saveProgress(imported);
-          alert('Progress imported successfully!');
-        } catch (error) {
-          alert('Error importing file. Please check the file format.');
-        }
-      };
-      reader.readAsText(file);
-    }
-  };
-
-  const calculateCompletion = () => {
-    let total = 0;
-    let completed = 0;
-    Object.values(progress).forEach(reading => {
-      Object.values(reading).forEach(score => {
-        total++;
-        if (score >= 85) completed++;
-      });
-    });
-    return { total, completed, percentage: total > 0 ? Math.round((completed / total) * 100) : 0 };
-  };
-
-  const readings = {
-    reading1: {
-      title: "Food Science",
-      paragraphs: ["Sample paragraph 1", "Sample paragraph 2"],
-      vocabulary: [{ word: "energy", arabic: "طاقة", definition: "power", example: "Food gives energy." }]
-    },
-    reading2: {
-      title: "Japanese School System",
-      paragraphs: ["Sample paragraph 1"],
-      vocabulary: []
-    },
-    reading3: {
-      title: "Student Portfolios",
-      paragraphs: ["Sample paragraph 1"],
-      vocabulary: []
-    }
-  };
-
-  const completion = calculateCompletion();
-  const canGetCertificate = completion.completed === completion.total && completion.total > 0;
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
-      <div className="max-w-6xl mx-auto">
-        <div className="bg-white rounded-xl shadow-lg p-8 mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <BookOpen className="w-10 h-10 text-indigo-600" />
-              <div>
-                <h1 className="text-3xl font-bold text-gray-800">GED-100 Reading Hub</h1>
-                <p className="text-gray-600">Independent Reading Assessment 202520</p>
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <button onClick={exportProgress} className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">
-                <Download className="w-4 h-4" />
-                Export
-              </button>
-              <label className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition cursor-pointer">
-                <Upload className="w-4 h-4" />
-                Import
-                <input type="file" accept=".json" onChange={importProgress} className="hidden" />
-              </label>
-            </div>
-          </div>
-
-          <div className="mb-4">
-            <div className="flex justify-between mb-2">
-              <span className="text-sm font-medium text-gray-700">Overall Progress</span>
-              <span className="text-sm font-medium text-indigo-600">{completion.percentage}%</span>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-3">
-              <div className="bg-indigo-600 h-3 rounded-full transition-all duration-500" style={{ width: `${completion.percentage}%` }} />
-            </div>
-            <p className="text-sm text-gray-600 mt-2">{completion.completed} of {completion.total} sections completed at 85% or higher</p>
-          </div>
-
-          {canGetCertificate && (
-            <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 border-2 border-yellow-400 rounded-lg p-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Award className="w-8 h-8 text-yellow-600" />
-                <div>
-                  <h3 className="font-bold text-yellow-800">Congratulations!</h3>
-                  <p className="text-sm text-yellow-700">You completed all sections with 85% or higher!</p>
-                </div>
-              </div>
-              <button onClick={() => alert('🎉 Certificate of Completion\n\nYou successfully completed all three reading assessments!\n\nGED-100 Reading Hub\n' + new Date().toLocaleDateString())} className="px-6 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition font-semibold">
-                Get Certificate
-              </button>
-            </div>
-          )}
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-6">
-          {['reading1', 'reading2', 'reading3'].map((readingKey, idx) => {
-            const reading = readings[readingKey];
-            const readingProgress = progress[readingKey];
-            const avgScore = Math.round((readingProgress.vocab + readingProgress.comprehension) / 2);
-
-            return (
-              <div key={readingKey} className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all cursor-pointer transform hover:scale-105" onClick={() => setCurrentReading(readingKey)}>
-                <div className="flex items-start justify-between mb-4">
-                  <div className="bg-indigo-100 p-3 rounded-lg">
-                    <Book className="w-6 h-6 text-indigo-600" />
-                  </div>
-                  <span className="text-2xl font-bold text-indigo-600">{idx + 1}</span>
-                </div>
-
-                <h3 className="text-xl font-bold text-gray-800 mb-2">{reading.title}</h3>
-                <p className="text-sm text-gray-600 mb-4">{reading.paragraphs.length} paragraphs • {reading.vocabulary.length} words</p>
-
-                <div className="space-y-2 mb-4">
-                  <div className="flex justify-between text-xs">
-                    <span className="text-gray-600">Vocabulary</span>
-                    <span className={readingProgress.vocab >= 85 ? 'text-green-600 font-semibold' : 'text-gray-600'}>{readingProgress.vocab}%</span>
-                  </div>
-                  <div className="flex justify-between text-xs">
-                    <span className="text-gray-600">Comprehension</span>
-                    <span className={readingProgress.comprehension >= 85 ? 'text-green-600 font-semibold' : 'text-gray-600'}>{readingProgress.comprehension}%</span>
-                  </div>
-                </div>
-
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div className="bg-indigo-600 h-2 rounded-full transition-all" style={{ width: `${avgScore}%` }} />
-                </div>
-                <p className="text-xs text-center mt-2 text-gray-600">Average: {avgScore}%</p>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </div>
-  );
-};
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GED-100 Reading Comprehension Hub</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script>
+        // PASTE YOUR ENTIRE REACT CODE FROM THE ARTIFACT HERE
+        // Then at the bottom, change the last line from:
+        // export default ReadingComprehensionHub;
+        // TO:
+        // ReactDOM.render(React.createElement(ReadingComprehensionHub), document.getElementById('root'));
+    </script>
+</body>
+</html>
