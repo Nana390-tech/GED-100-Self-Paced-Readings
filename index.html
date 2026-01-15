@@ -4,19 +4,397 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GED-100 Reading Comprehension Hub</title>
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
     <div id="root"></div>
-    
-    <script>
-        // PASTE YOUR ENTIRE REACT CODE FROM THE ARTIFACT HERE
-        // Then at the bottom, change the last line from:
-        // export default ReadingComprehensionHub;
-        // TO:
-        // ReactDOM.render(React.createElement(ReadingComprehensionHub), document.getElementById('root'));
+    <script type="module">
+        import React, { useState, useEffect } from 'https://esm.sh/react@18';
+        import ReactDOM from 'https://esm.sh/react-dom@18/client';
+        
+        const BookOpenIcon = () => React.createElement('svg', {className: 'w-10 h-10', fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24'}, 
+            React.createElement('path', {strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253'})
+        );
+        
+        const DownloadIcon = () => React.createElement('svg', {className: 'w-4 h-4', fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24'}, 
+            React.createElement('path', {strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4'})
+        );
+        
+        const UploadIcon = () => React.createElement('svg', {className: 'w-4 h-4', fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24'}, 
+            React.createElement('path', {strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L9 8m4-4v12'})
+        );
+        
+        const AwardIcon = () => React.createElement('svg', {className: 'w-8 h-8', fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24'}, 
+            React.createElement('path', {strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z'})
+        );
+        
+        const BookIcon = () => React.createElement('svg', {className: 'w-6 h-6', fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24'}, 
+            React.createElement('path', {strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253'})
+        );
+        
+        const HomeIcon = () => React.createElement('svg', {className: 'w-5 h-5', fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24'}, 
+            React.createElement('path', {strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6'})
+        );
+
+        function ReadingComprehensionHub() {
+            const [currentReading, setCurrentReading] = useState(null);
+            const [currentSection, setCurrentSection] = useState(null);
+            const [showReading, setShowReading] = useState(false);
+            const [currentParagraph, setCurrentParagraph] = useState(null);
+            const [progress, setProgress] = useState({
+                reading1: { vocab: 0, comprehension: 0 },
+                reading2: { vocab: 0, comprehension: 0 },
+                reading3: { vocab: 0, comprehension: 0 }
+            });
+            const [currentActivity, setCurrentActivity] = useState(null);
+            const [userAnswers, setUserAnswers] = useState({});
+            const [showResults, setShowResults] = useState(false);
+            const [activityScore, setActivityScore] = useState(0);
+            const [cardIndex, setCardIndex] = useState(0);
+            const [flipped, setFlipped] = useState(false);
+
+            useEffect(() => {
+                const saved = localStorage.getItem('readingProgress');
+                if (saved) {
+                    try {
+                        setProgress(JSON.parse(saved));
+                    } catch (e) {
+                        console.error('Error loading progress');
+                    }
+                }
+            }, []);
+
+            useEffect(() => {
+                if (currentActivity !== 'flashcards') {
+                    setCardIndex(0);
+                    setFlipped(false);
+                }
+                if (currentActivity === null || currentSection === null) {
+                    setUserAnswers({});
+                    setShowResults(false);
+                    setActivityScore(0);
+                }
+            }, [currentActivity, currentSection]);
+
+            const saveProgress = (newProgress) => {
+                setProgress(newProgress);
+                localStorage.setItem('readingProgress', JSON.stringify(newProgress));
+            };
+
+            const exportProgress = () => {
+                const dataStr = JSON.stringify(progress, null, 2);
+                const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(dataBlob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'reading-progress.json';
+                link.click();
+            };
+
+            const importProgress = (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        try {
+                            const imported = JSON.parse(e.target.result);
+                            saveProgress(imported);
+                            alert('Progress imported successfully!');
+                        } catch (error) {
+                            alert('Error importing file.');
+                        }
+                    };
+                    reader.readAsText(file);
+                }
+            };
+
+            const calculateCompletion = () => {
+                let total = 0;
+                let completed = 0;
+                Object.values(progress).forEach(reading => {
+                    Object.values(reading).forEach(score => {
+                        total++;
+                        if (score >= 85) completed++;
+                    });
+                });
+                return { total, completed, percentage: total > 0 ? Math.round((completed / total) * 100) : 0 };
+            };
+
+            const handleSubmit = () => {
+                const readings = getReadings();
+                const activities = getActivities();
+                let currentActivityData;
+                
+                if (currentParagraph !== null) {
+                    currentActivityData = readings[currentReading].paragraphQuestions[currentParagraph];
+                } else if (currentSection === 'comprehension' && currentActivity === 'overall') {
+                    currentActivityData = readings[currentReading].overallQuestions;
+                } else if (currentSection === 'vocab') {
+                    if (currentActivity === 'matching') {
+                        currentActivityData = activities[currentReading].vocab.matching;
+                    } else if (currentActivity === 'fillBlanks') {
+                        currentActivityData = activities[currentReading].vocab.fillBlanks;
+                    }
+                }
+
+                if (!currentActivityData) return;
+
+                let correct = 0;
+                currentActivityData.forEach((q, idx) => {
+                    if (userAnswers[idx] === q.correct) {
+                        correct++;
+                    }
+                });
+
+                const score = Math.round((correct / currentActivityData.length) * 100);
+                setActivityScore(score);
+                setShowResults(true);
+
+                if (currentParagraph === null && currentActivity !== 'flashcards') {
+                    const newProgress = { ...progress };
+                    if (score > newProgress[currentReading][currentSection]) {
+                        newProgress[currentReading][currentSection] = score;
+                        saveProgress(newProgress);
+                    }
+                }
+            };
+
+            const retryActivity = () => {
+                setUserAnswers({});
+                setShowResults(false);
+                setActivityScore(0);
+            };
+
+            const highlightVocabulary = (text, vocabWords) => {
+                let highlightedText = text;
+                vocabWords.forEach(word => {
+                    const regex = new RegExp('\\b(' + word + ')\\b', 'gi');
+                    highlightedText = highlightedText.replace(regex, '<mark class="bg-yellow-200 font-semibold">$1</mark>');
+                });
+                return highlightedText;
+            };
+
+            const getReadings = () => ({
+                reading1: {
+                    title: "Food Science",
+                    vocabularyWords: ["energy", "healthy", "field", "explores", "effect", "chemistry", "biology", "flavor", "sour", "melts"],
+                    paragraphs: [
+                        "From breakfast to dinner, our food gives us energy and keeps us healthy. Have you ever thought about the science behind your favorite foods? Why does the food we love taste so good and keep us strong? Food science is an amazing field that explores what we eat, how we make it, and what effect it has on our minds and bodies.",
+                        "Think of food science as a detective story about what happens to your food, from the farm to your plate. It is a mix of chemistry, biology, and even a little bit of physics. Scientists in this field study how food grows, how we cook it, and how it develops our bodies.",
+                        "Chemistry helps us understand what makes food taste good and why certain foods have special flavors. It allows scientists to discover what makes a tomato sour or why chocolate melts in your mouth."
+                    ],
+                    vocabulary: [
+                        { word: "energy", arabic: "طاقة", definition: "power needed to do work or be active", example: "Food gives us energy to play and study." },
+                        { word: "healthy", arabic: "صحي", definition: "good for your body", example: "Eating vegetables keeps you healthy." },
+                        { word: "field", arabic: "مجال", definition: "an area of study or work", example: "Biology is an interesting field." }
+                    ],
+                    paragraphQuestions: [
+                        [
+                            { question: "What does food give us according to the first sentence?", options: ["Energy and health", "Money and happiness", "Strength only", "Taste only"], correct: 0 },
+                            { question: "What does food science explore?", options: ["Only cooking", "What we eat, how we make it, and its effects", "Only taste", "Only nutrition"], correct: 1 }
+                        ]
+                    ],
+                    overallQuestions: [
+                        { question: "What are the three main sciences that make up food science?", options: ["Chemistry, biology, and physics", "Math, art, and history", "Only chemistry", "Only biology"], correct: 0 },
+                        { question: "Why do biologists work with food?", options: ["To make it taste better only", "To ensure it's safe and stays fresh", "To make it more expensive", "To change its color"], correct: 1 }
+                    ]
+                },
+                reading2: {
+                    title: "The Japanese School Education System",
+                    vocabularyWords: ["consists", "mandatory", "expensive"],
+                    paragraphs: [
+                        "The Japanese school education system consists of 12 years. The first 9 years of education, from elementary school (6 years) to junior high school (3 years), is mandatory in Japan.",
+                        "Students spend a lot of time at school because of their club activities."
+                    ],
+                    vocabulary: [
+                        { word: "consists", arabic: "يتكون", definition: "to be made up of parts", example: "The class consists of 20 students." },
+                        { word: "mandatory", arabic: "إلزامي", definition: "required; must be done", example: "Wearing a uniform is mandatory." }
+                    ],
+                    paragraphQuestions: [
+                        [
+                            { question: "How many years does the Japanese school education system consist of?", options: ["9 years", "10 years", "12 years", "15 years"], correct: 2 }
+                        ]
+                    ],
+                    overallQuestions: [
+                        { question: "Which years of education are mandatory in Japan?", options: ["All 12", "The first 9", "The last 3", "Only elementary"], correct: 1 }
+                    ]
+                },
+                reading3: {
+                    title: "Student Portfolios",
+                    vocabularyWords: ["portfolio", "digital"],
+                    paragraphs: [
+                        "Portfolios have been around for a very long time. The word portfolio comes from the Italian word portafoglio, which referred to a set of pictures or drawings."
+                    ],
+                    vocabulary: [
+                        { word: "portfolio", arabic: "ملف أعمال", definition: "a collection of work samples", example: "Create a portfolio to show your projects." }
+                    ],
+                    paragraphQuestions: [
+                        [
+                            { question: "From which language does the word portfolio originate?", options: ["French", "Spanish", "Italian", "English"], correct: 2 }
+                        ]
+                    ],
+                    overallQuestions: [
+                        { question: "From which language does the word portfolio come?", options: ["French", "Spanish", "Italian", "German"], correct: 2 }
+                    ]
+                }
+            });
+
+            const getActivities = () => ({
+                reading1: {
+                    vocab: {
+                        matching: [
+                            { word: "energy", options: ["قوة", "طاقة", "غذاء", "ماء"], correct: 1 },
+                            { word: "healthy", options: ["مريض", "صحي", "قوي", "ضعيف"], correct: 1 }
+                        ],
+                        fillBlanks: [
+                            { sentence: "Food gives us _____ to study.", options: ["energy", "water", "money", "time"], correct: 0 }
+                        ]
+                    }
+                },
+                reading2: { vocab: { matching: [], fillBlanks: [] } },
+                reading3: { vocab: { matching: [], fillBlanks: [] } }
+            });
+
+            const readings = getReadings();
+            const activities = getActivities();
+            const completion = calculateCompletion();
+            const canGetCertificate = completion.completed === completion.total && completion.total > 0;
+
+            if (!currentReading) {
+                return React.createElement('div', { className: 'min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6' },
+                    React.createElement('div', { className: 'max-w-6xl mx-auto' },
+                        React.createElement('div', { className: 'bg-white rounded-xl shadow-lg p-8 mb-6' },
+                            React.createElement('div', { className: 'flex items-center justify-between mb-4' },
+                                React.createElement('div', { className: 'flex items-center gap-3' },
+                                    React.createElement('div', { className: 'text-indigo-600' }, React.createElement(BookOpenIcon)),
+                                    React.createElement('div', null,
+                                        React.createElement('h1', { className: 'text-3xl font-bold text-gray-800' }, 'GED-100 Reading Hub'),
+                                        React.createElement('p', { className: 'text-gray-600' }, 'Independent Reading Assessment 202520')
+                                    )
+                                ),
+                                React.createElement('div', { className: 'flex gap-2' },
+                                    React.createElement('button', { onClick: exportProgress, className: 'flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition' },
+                                        React.createElement(DownloadIcon),
+                                        'Export'
+                                    ),
+                                    React.createElement('label', { className: 'flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition cursor-pointer' },
+                                        React.createElement(UploadIcon),
+                                        'Import',
+                                        React.createElement('input', { type: 'file', accept: '.json', onChange: importProgress, className: 'hidden' })
+                                    )
+                                )
+                            ),
+                            React.createElement('div', { className: 'mb-4' },
+                                React.createElement('div', { className: 'flex justify-between mb-2' },
+                                    React.createElement('span', { className: 'text-sm font-medium text-gray-700' }, 'Overall Progress'),
+                                    React.createElement('span', { className: 'text-sm font-medium text-indigo-600' }, completion.percentage + '%')
+                                ),
+                                React.createElement('div', { className: 'w-full bg-gray-200 rounded-full h-3' },
+                                    React.createElement('div', { className: 'bg-indigo-600 h-3 rounded-full transition-all duration-500', style: { width: completion.percentage + '%' } })
+                                ),
+                                React.createElement('p', { className: 'text-sm text-gray-600 mt-2' }, completion.completed + ' of ' + completion.total + ' sections completed at 85% or higher')
+                            ),
+                            canGetCertificate && React.createElement('div', { className: 'bg-gradient-to-r from-yellow-50 to-yellow-100 border-2 border-yellow-400 rounded-lg p-4 flex items-center justify-between' },
+                                React.createElement('div', { className: 'flex items-center gap-3' },
+                                    React.createElement('div', { className: 'text-yellow-600' }, React.createElement(AwardIcon)),
+                                    React.createElement('div', null,
+                                        React.createElement('h3', { className: 'font-bold text-yellow-800' }, 'Congratulations!'),
+                                        React.createElement('p', { className: 'text-sm text-yellow-700' }, 'You completed all sections with 85% or higher!')
+                                    )
+                                ),
+                                React.createElement('button', { 
+                                    onClick: () => alert('🎉 Certificate of Completion\n\nYou successfully completed all three reading assessments!\n\nGED-100 Reading Hub'), 
+                                    className: 'px-6 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition font-semibold' 
+                                }, 'Get Certificate')
+                            )
+                        ),
+                        React.createElement('div', { className: 'grid md:grid-cols-3 gap-6' },
+                            ['reading1', 'reading2', 'reading3'].map((readingKey, idx) => {
+                                const reading = readings[readingKey];
+                                const readingProgress = progress[readingKey];
+                                const avgScore = Math.round((readingProgress.vocab + readingProgress.comprehension) / 2);
+
+                                return React.createElement('div', { 
+                                    key: readingKey, 
+                                    className: 'bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all cursor-pointer transform hover:scale-105',
+                                    onClick: () => setCurrentReading(readingKey)
+                                },
+                                    React.createElement('div', { className: 'flex items-start justify-between mb-4' },
+                                        React.createElement('div', { className: 'bg-indigo-100 p-3 rounded-lg text-indigo-600' }, React.createElement(BookIcon)),
+                                        React.createElement('span', { className: 'text-2xl font-bold text-indigo-600' }, idx + 1)
+                                    ),
+                                    React.createElement('h3', { className: 'text-xl font-bold text-gray-800 mb-2' }, reading.title),
+                                    React.createElement('p', { className: 'text-sm text-gray-600 mb-4' }, reading.paragraphs.length + ' paragraphs • ' + reading.vocabulary.length + ' words'),
+                                    React.createElement('div', { className: 'space-y-2 mb-4' },
+                                        React.createElement('div', { className: 'flex justify-between text-xs' },
+                                            React.createElement('span', { className: 'text-gray-600' }, 'Vocabulary'),
+                                            React.createElement('span', { className: readingProgress.vocab >= 85 ? 'text-green-600 font-semibold' : 'text-gray-600' }, readingProgress.vocab + '%')
+                                        ),
+                                        React.createElement('div', { className: 'flex justify-between text-xs' },
+                                            React.createElement('span', { className: 'text-gray-600' }, 'Comprehension'),
+                                            React.createElement('span', { className: readingProgress.comprehension >= 85 ? 'text-green-600 font-semibold' : 'text-gray-600' }, readingProgress.comprehension + '%')
+                                        )
+                                    ),
+                                    React.createElement('div', { className: 'w-full bg-gray-200 rounded-full h-2' },
+                                        React.createElement('div', { className: 'bg-indigo-600 h-2 rounded-full transition-all', style: { width: avgScore + '%' } })
+                                    ),
+                                    React.createElement('p', { className: 'text-xs text-center mt-2 text-gray-600' }, 'Average: ' + avgScore + '%')
+                                );
+                            })
+                        )
+                    )
+                );
+            }
+
+            const reading = readings[currentReading];
+
+            return React.createElement('div', { className: 'min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6' },
+                React.createElement('div', { className: 'max-w-4xl mx-auto' },
+                    React.createElement('button', { 
+                        onClick: () => setCurrentReading(null), 
+                        className: 'flex items-center gap-2 text-indigo-600 hover:text-indigo-800 mb-6 px-4 py-2 bg-white rounded-lg shadow' 
+                    },
+                        React.createElement(HomeIcon),
+                        'Back to Home'
+                    ),
+                    React.createElement('div', { className: 'bg-white rounded-xl shadow-lg p-8' },
+                        React.createElement('h2', { className: 'text-3xl font-bold text-gray-800 mb-6' }, reading.title),
+                        React.createElement('div', { className: 'mb-8' },
+                            React.createElement('h3', { className: 'text-2xl font-bold text-gray-800 mb-4' }, 'Reading Passages'),
+                            reading.paragraphs.map((para, idx) =>
+                                React.createElement('div', { key: idx, className: 'border-2 border-gray-200 rounded-lg p-4 mb-3' },
+                                    React.createElement('div', { className: 'flex items-start gap-3' },
+                                        React.createElement('span', { className: 'flex-shrink-0 w-8 h-8 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold text-sm' }, idx + 1),
+                                        React.createElement('p', { 
+                                            className: 'text-gray-700 leading-relaxed',
+                                            dangerouslySetInnerHTML: { __html: highlightVocabulary(para, reading.vocabularyWords) }
+                                        })
+                                    )
+                                )
+                            )
+                        ),
+                        React.createElement('div', null,
+                            React.createElement('h3', { className: 'text-2xl font-bold text-gray-800 mb-4' }, 'Vocabulary (' + reading.vocabulary.length + ' words)'),
+                            reading.vocabulary.map((vocab, idx) =>
+                                React.createElement('div', { key: idx, className: 'border-2 border-indigo-200 rounded-lg p-4 mb-3' },
+                                    React.createElement('div', { className: 'flex justify-between items-start mb-2' },
+                                        React.createElement('span', { className: 'text-xl font-bold text-indigo-600' }, vocab.word),
+                                        React.createElement('span', { className: 'text-xl text-gray-600' }, vocab.arabic)
+                                    ),
+                                    React.createElement('p', { className: 'text-gray-700 mb-1' },
+                                        React.createElement('strong', null, 'Definition: '),
+                                        vocab.definition
+                                    ),
+                                    React.createElement('p', { className: 'text-gray-600 italic' }, '"' + vocab.example + '"')
+                                )
+                            )
+                        )
+                    )
+                )
+            );
+        }
+
+        ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(ReadingComprehensionHub));
     </script>
 </body>
 </html>
