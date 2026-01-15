@@ -4,397 +4,1447 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GED-100 Reading Comprehension Hub</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .back-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-btn:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .reading-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .reading-card {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 15px;
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .reading-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            border-color: #667eea;
+        }
+
+        .reading-card h3 {
+            font-size: 1.5em;
+            color: #1f2937;
+            margin-bottom: 12px;
+        }
+
+        .reading-card p {
+            color: #6b7280;
+            margin-bottom: 16px;
+        }
+
+        .progress-info {
+            margin: 12px 0;
+            font-size: 0.9em;
+        }
+
+        .progress-info div {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            color: #4b5563;
+        }
+
+        .progress-bar {
+            background: #e5e7eb;
+            height: 8px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 12px 0;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            transition: width 0.5s;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 10px 5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-green {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .btn-blue {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        }
+
+        .activity-grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .activity-option {
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .activity-option:hover {
+            border-color: #667eea;
+            background: #f9fafb;
+        }
+
+        .activity-option h3 {
+            font-size: 1.3em;
+            margin-bottom: 8px;
+            color: #1f2937;
+        }
+
+        .activity-option p {
+            color: #6b7280;
+        }
+
+        .reading-text {
+            background: #f9fafb;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            line-height: 1.8;
+            font-size: 1.05em;
+        }
+
+        .reading-text p {
+            margin-bottom: 16px;
+            text-align: justify;
+        }
+
+        .vocab-word {
+            background: #fef3c7;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+            border-bottom: 2px solid #fbbf24;
+        }
+
+        .flashcard-container {
+            perspective: 1000px;
+            margin: 20px 0;
+        }
+
+        .flashcard {
+            position: relative;
+            width: 100%;
+            height: 320px;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .flashcard-front {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .flashcard-back {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-front h2 {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+        }
+
+        .flashcard-back h2 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .question-block {
+            background: #f9fafb;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+
+        .question-text {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #1f2937;
+        }
+
+        .option {
+            background: white;
+            border: 2px solid #e5e7eb;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            background: #f3f4f6;
+        }
+
+        .option.selected {
+            border-color: #667eea;
+            background: #eef2ff;
+        }
+
+        .option.correct {
+            border-color: #10b981;
+            background: #d1fae5;
+        }
+
+        .option.incorrect {
+            border-color: #ef4444;
+            background: #fee2e2;
+        }
+
+        .score-display {
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .score-display h2 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .score-number {
+            font-size: 4em;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .certificate {
+            background: white;
+            border: 10px double #667eea;
+            padding: 40px;
+            text-align: center;
+            border-radius: 20px;
+            margin: 30px auto;
+            max-width: 800px;
+        }
+
+        .certificate h2 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .alert {
+            padding: 16px;
+            border-radius: 10px;
+            margin: 16px 0;
+            border-left: 4px solid;
+        }
+
+        .alert-info {
+            background: #dbeafe;
+            border-color: #3b82f6;
+            color: #1e40af;
+        }
+
+        .alert-warning {
+            background: #fef3c7;
+            border-color: #f59e0b;
+            color: #92400e;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            border-color: #10b981;
+            color: #065f46;
+        }
+
+        .nav-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .paragraph-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .paragraph-btn {
+            padding: 12px;
+            background: #dbeafe;
+            color: #1e40af;
+            border: 2px solid #3b82f6;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .paragraph-btn:hover {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .export-import {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+
+        .export-import button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .export-btn {
+            background: #10b981;
+            color: white;
+        }
+
+        .import-btn {
+            background: #3b82f6;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .content {
+                padding: 15px;
+            }
+
+            .flashcard-front h2 {
+                font-size: 2.5em;
+            }
+
+            .flashcard-back h2 {
+                font-size: 1.8em;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+    </style>
 </head>
 <body>
-    <div id="root"></div>
-    <script type="module">
-        import React, { useState, useEffect } from 'https://esm.sh/react@18';
-        import ReactDOM from 'https://esm.sh/react-dom@18/client';
-        
-        const BookOpenIcon = () => React.createElement('svg', {className: 'w-10 h-10', fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24'}, 
-            React.createElement('path', {strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253'})
-        );
-        
-        const DownloadIcon = () => React.createElement('svg', {className: 'w-4 h-4', fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24'}, 
-            React.createElement('path', {strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4'})
-        );
-        
-        const UploadIcon = () => React.createElement('svg', {className: 'w-4 h-4', fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24'}, 
-            React.createElement('path', {strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L9 8m4-4v12'})
-        );
-        
-        const AwardIcon = () => React.createElement('svg', {className: 'w-8 h-8', fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24'}, 
-            React.createElement('path', {strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z'})
-        );
-        
-        const BookIcon = () => React.createElement('svg', {className: 'w-6 h-6', fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24'}, 
-            React.createElement('path', {strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253'})
-        );
-        
-        const HomeIcon = () => React.createElement('svg', {className: 'w-5 h-5', fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24'}, 
-            React.createElement('path', {strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6'})
-        );
+    <div class="container">
+        <div class="header">
+            <h1>📚 GED-100 Reading Comprehension Hub</h1>
+            <p>Independent Reading Assessment 202520 | Designed by: Nazila Motahari</p>
+        </div>
 
-        function ReadingComprehensionHub() {
-            const [currentReading, setCurrentReading] = useState(null);
-            const [currentSection, setCurrentSection] = useState(null);
-            const [showReading, setShowReading] = useState(false);
-            const [currentParagraph, setCurrentParagraph] = useState(null);
-            const [progress, setProgress] = useState({
+        <div class="content" id="app">
+            <!-- Content will be rendered here -->
+        </div>
+    </div>
+
+    <script>
+        // Data from the React version
+        const readings = {
+            reading1: {
+                title: "Food Science",
+                vocabularyWords: ["energy", "healthy", "field", "explores", "effect", "chemistry", "biology", "flavor", "sour", "melts", "producing", "fresh", "freeze", "environment", "handled", "nutrition", "vitamins", "minerals", "proteins", "ingredients", "allergens", "prevent", "germs", "shortage", "waste", "damage", "reduce"],
+                paragraphs: [
+                    "From breakfast to dinner, our food gives us energy and keeps us healthy. Have you ever thought about the science behind your favorite foods? Why does the food we love taste so good and keep us strong? Food science is an amazing field that explores what we eat, how we make it, and what effect it has on our minds and bodies.",
+                    "Think of food science as a detective story about what happens to your food, from the farm to your plate. It is a mix of chemistry, biology, and even a little bit of physics. Scientists in this field study how food grows, how we cook it, and how it develops our bodies. This research helps scientists explain everything about food, from what gives flavor to tomatoes to how a small seed becomes a juicy fruit.",
+                    "Chemistry helps us understand what makes food taste good and why certain foods have special flavors. It allows scientists to discover what makes a tomato sour or why chocolate melts in your mouth. Chemistry helps us understand what happens when we cook food, such as when raw rice becomes soft or when baking flour becomes a delicious cake. Biology is another big part of food science. Biology studies the plants and animals that are used in producing food. Biologists work with other scientists to make sure that food is safe for us to eat and stays fresh for longer. They cool or freeze food in refrigerators and pack it safely.",
+                    "The field of food science is always changing and improving to make food healthy, tasty, and friendly to the environment. These changes create many jobs in food science, from using technology to making farming smarter and food safer. Whether you want to work on a farm, in a lab, or in a kitchen, there is a job for you in food science.",
+                    "Professionals like pharmacy technicians, healthcare workers, and life science technicians have important jobs in food science. Pharmacy technicians study the chemicals used in food or medicines. Healthcare workers make sure that food is handled and stored safely. They teach us about healthy eating habits and the safe handling of food. Medical assistants work with doctors and nurses to help patients make healthy food choices. Life science technicians study the effect plants and animals have on how food is grown.",
+                    "Nutrition is all about the good stuff like vitamins, minerals, proteins, and fats that keep you healthy. Therefore, medical assistants help by checking how much of the good stuff is in your favorite snacks and meals. Have you ever wondered what those numbers and words on food labels mean? Well, the next time you come across a food label, remember that it is like a map that shows you what is inside your food and where it came from. They show you things like calories (how much energy you get), ingredients (what is in your food), and allergens (things that some people are allergic to or that make them sick).",
+                    "You may have also seen those 'best before' dates on food packs? This shows whether the food is fresh and safe. Food scientists work hard to see that your food will not make you sick. They study how to prevent germs (things that result in illness or disease) from growing, and how to store food so it stays fresh longer. They make sure that everything from a can of beans to frozen peas is safe to eat.",
+                    "However, food science has its challenges. Food shortage is a real problem for many people around the world. Scientists are studying ways to grow more food, without damaging the environment. They are making sure everyone in the world has enough to eat and are creating ways to reduce food waste. They are also looking for solutions to food allergies and health problems that result from the food we eat.",
+                    "The future of food science is exciting! Scientists are considering inventing new foods that are good for you and the environment. Who knows? Maybe one day you will be eating dinner or a tasty snack made from items grown in a lab. The next time you sit down to have a delicious meal, think about where your food came from and the science behind it. So, whether you are biting into a crisp apple or enjoying pizza with cheese, remember that all that great taste is thanks to the science and research into what and how we eat."
+                ],
+                vocabulary: [
+                    { word: "energy", arabic: "طاقة", definition: "power needed to do work or be active", example: "Food gives us energy to play and study." },
+                    { word: "healthy", arabic: "صحي", definition: "good for your body", example: "Eating vegetables keeps you healthy." },
+                    { word: "field", arabic: "مجال", definition: "an area of study or work", example: "Biology is an interesting field." },
+                    { word: "explores", arabic: "يستكشف", definition: "to study or learn about something", example: "Scientists explore new ideas." },
+                    { word: "effect", arabic: "تأثير", definition: "a change caused by something", example: "Exercise has a good effect on health." },
+                    { word: "chemistry", arabic: "كيمياء", definition: "the science of substances and reactions", example: "Chemistry helps us understand cooking." },
+                    { word: "biology", arabic: "علم الأحياء", definition: "the science of living things", example: "Biology studies plants and animals." },
+                    { word: "flavor", arabic: "نكهة", definition: "the taste of food", example: "Chocolate has a sweet flavor." },
+                    { word: "sour", arabic: "حامض", definition: "having a sharp, acidic taste", example: "Lemons taste sour." },
+                    { word: "melts", arabic: "يذوب", definition: "to change from solid to liquid", example: "Ice cream melts in the sun." },
+                    { word: "producing", arabic: "ينتج", definition: "to make or create something", example: "Farms are producing fresh vegetables." },
+                    { word: "fresh", arabic: "طازج", definition: "newly made or recently picked", example: "Fresh bread smells wonderful." },
+                    { word: "freeze", arabic: "يجمد", definition: "to make very cold and solid", example: "We freeze food to keep it longer." },
+                    { word: "environment", arabic: "بيئة", definition: "the natural world around us", example: "We must protect the environment." },
+                    { word: "handled", arabic: "يتعامل مع", definition: "to touch, hold, or manage something", example: "Food must be handled carefully." },
+                    { word: "nutrition", arabic: "تغذية", definition: "the food needed for health and growth", example: "Good nutrition helps students learn." },
+                    { word: "vitamins", arabic: "فيتامينات", definition: "substances in food that keep you healthy", example: "Oranges have vitamin C." },
+                    { word: "minerals", arabic: "معادن", definition: "natural substances needed for health", example: "Milk contains important minerals." },
+                    { word: "proteins", arabic: "بروتينات", definition: "substances that build muscles", example: "Chicken has a lot of protein." },
+                    { word: "ingredients", arabic: "مكونات", definition: "items used to make food", example: "Sugar is an ingredient in cookies." },
+                    { word: "allergens", arabic: "مسببات الحساسية", definition: "things that cause allergic reactions", example: "Peanuts are common allergens." },
+                    { word: "prevent", arabic: "يمنع", definition: "to stop something from happening", example: "Washing hands prevents illness." },
+                    { word: "germs", arabic: "جراثيم", definition: "tiny organisms that cause disease", example: "Germs can make you sick." },
+                    { word: "shortage", arabic: "نقص", definition: "not having enough of something", example: "There is a food shortage in some countries." },
+                    { word: "waste", arabic: "هدر", definition: "to use more than needed", example: "Don't waste good food." },
+                    { word: "damage", arabic: "يضر", definition: "to harm or hurt something", example: "Pollution can damage our health." },
+                    { word: "reduce", arabic: "يقلل", definition: "to make less or smaller", example: "We should reduce food waste." }
+                ],
+                vocabActivities: {
+                    matching: [
+                        { word: "energy", options: ["قوة", "طاقة", "غذاء", "ماء"], correct: 1 },
+                        { word: "healthy", options: ["مريض", "صحي", "قوي", "ضعيف"], correct: 1 },
+                        { word: "explores", options: ["يدرس", "يكتب", "يستكشف", "يسافر"], correct: 2 },
+                        { word: "flavor", options: ["نكهة", "رائحة", "لون", "شكل"], correct: 0 },
+                        { word: "melts", options: ["يجمد", "يذوب", "يطبخ", "يبرد"], correct: 1 },
+                        { word: "freeze", options: ["يذوب", "يجمد", "يسخن", "يبرد"], correct: 1 },
+                        { word: "nutrition", options: ["طبخ", "تغذية", "رياضة", "تعليم"], correct: 1 },
+                        { word: "prevent", options: ["يساعد", "يمنع", "يشجع", "يسمح"], correct: 1 },
+                        { word: "shortage", options: ["كثرة", "نقص", "وفرة", "توازن"], correct: 1 },
+                        { word: "damage", options: ["يبني", "يصلح", "يضر", "ينظف"], correct: 2 }
+                    ],
+                    fillBlanks: [
+                        { sentence: "Food gives us _____ to study.", options: ["energy", "water", "money", "time"], correct: 0 },
+                        { sentence: "Scientists study _____.", options: ["history", "chemistry", "geography", "art"], correct: 1 },
+                        { sentence: "We _____ food to keep fresh.", options: ["melt", "cook", "freeze", "wash"], correct: 2 },
+                        { sentence: "Vitamins are important for _____.", options: ["weather", "nutrition", "education", "transport"], correct: 1 },
+                        { sentence: "Scientists work to _____ germs.", options: ["help", "encourage", "prevent", "allow"], correct: 2 },
+                        { sentence: "Biology studies plants used in _____ food.", options: ["eating", "selling", "producing", "buying"], correct: 2 },
+                        { sentence: "The _____ of food science changes.", options: ["price", "field", "color", "smell"], correct: 1 },
+                        { sentence: "Food labels show _____.", options: ["only taste", "only color", "ingredients and allergens", "only price"], correct: 2 },
+                        { sentence: "Scientists work to _____ waste.", options: ["increase", "reduce", "ignore", "celebrate"], correct: 1 },
+                        { sentence: "Chemistry explains _____.", options: ["price", "flavor", "package", "brand"], correct: 1 }
+                    ]
+                },
+                paragraphQuestions: [
+                    [
+                        { question: "What does food give us according to the first sentence?", options: ["Energy and health", "Money and happiness", "Strength only", "Taste only"], correct: 0 },
+                        { question: "What does food science explore?", options: ["Only cooking methods", "What we eat, how we make it, and its effects", "Only taste", "Only nutrition"], correct: 1 }
+                    ],
+                    [
+                        { question: "What is food science compared to in this paragraph?", options: ["A cooking show", "A detective story", "A history book", "A science experiment"], correct: 1 },
+                        { question: "Which sciences are part of food science?", options: ["Chemistry, biology, and physics", "Math and art", "Only chemistry", "Geography and history"], correct: 0 }
+                    ],
+                    [
+                        { question: "What does chemistry help us understand about food?", options: ["Only prices", "What makes food taste good and changes when cooking", "Only colors", "Only packaging"], correct: 1 },
+                        { question: "What do biologists do in food science?", options: ["Only cook food", "Ensure food is safe and stays fresh", "Only grow plants", "Only study animals"], correct: 1 }
+                    ],
+                    [
+                        { question: "How is food science described in terms of change?", options: ["It never changes", "It is always changing and improving", "It only changes slowly", "It stopped developing"], correct: 1 },
+                        { question: "Where can you work in food science?", options: ["Only in labs", "Only on farms", "On farms, in labs, or in kitchens", "Only in restaurants"], correct: 2 }
+                    ],
+                    [
+                        { question: "What do pharmacy technicians study?", options: ["Only medicine", "Chemicals in food or medicines", "Only cooking", "Only nutrition"], correct: 1 },
+                        { question: "What is one job of healthcare workers in food science?", options: ["Cook food", "Ensure food is handled and stored safely", "Sell food", "Transport food"], correct: 1 }
+                    ],
+                    [
+                        { question: "What is nutrition about?", options: ["Only calories", "Vitamins, minerals, proteins, and fats", "Only taste", "Only appearance"], correct: 1 },
+                        { question: "What are food labels compared to?", options: ["A puzzle", "A map showing what's inside food", "A picture", "A story"], correct: 1 }
+                    ],
+                    [
+                        { question: "What do 'best before' dates show?", options: ["When to buy food", "Whether food is fresh and safe", "The price", "Where food came from"], correct: 1 },
+                        { question: "What do food scientists study about germs?", options: ["How to grow them", "How to prevent them from growing", "How to cook them", "Where they live"], correct: 1 }
+                    ],
+                    [
+                        { question: "What is one challenge in food science?", options: ["Too much food", "Food shortage", "Too many scientists", "Too many farms"], correct: 1 },
+                        { question: "What are scientists trying to do about the environment?", options: ["Damage it more", "Grow more food without damaging it", "Ignore it", "Study only plants"], correct: 1 }
+                    ],
+                    [
+                        { question: "How is the future of food science described?", options: ["Boring", "Exciting", "Impossible", "Uncertain"], correct: 1 },
+                        { question: "Where might future food be grown according to the text?", options: ["Only on farms", "In labs", "In stores", "In restaurants"], correct: 1 }
+                    ]
+                ],
+                overallQuestions: [
+                    { question: "What are the three main sciences that make up food science?", options: ["Chemistry, biology, and physics", "Math, art, and history", "Only chemistry", "Only biology"], correct: 0 },
+                    { question: "Why do biologists work with food?", options: ["To make it taste better only", "To ensure it's safe and stays fresh", "To make it more expensive", "To change its color"], correct: 1 },
+                    { question: "What information do food labels provide?", options: ["Only the price", "Calories, ingredients, and allergens", "Only the brand name", "Only recipes"], correct: 1 },
+                    { question: "What is one major challenge food science faces?", options: ["Too many workers", "Food shortage", "Too much research", "Lack of technology"], correct: 1 },
+                    { question: "Based on the text, what can we infer about the role of food science in addressing global food problems?", options: ["Food science has no role in solving food problems", "Food science is actively working to solve issues like food shortage and environmental damage", "Food science only focuses on taste", "Food science ignores environmental concerns"], correct: 1, inference: true },
+                    { question: "Why do you think the text compares food science to a detective story?", options: ["Because food scientists wear detective hats", "Because food science involves investigation and discovery about how food works", "Because food science is boring", "Because detectives study food"], correct: 1, inference: true }
+                ]
+            },
+            reading2: {
+                title: "The Japanese School Education System",
+                vocabularyWords: ["consists", "elementary", "mandatory", "complete", "education", "public", "private", "expensive", "facilities", "optional", "graduate", "vocational", "rarely", "mop", "wipe", "trash", "arrange", "mess", "discipline", "friendships", "throughout", "festival", "unique", "talents", "performances", "cafeteria", "encouraged", "relationships", "competition", "career"],
+                paragraphs: [
+                    "The Japanese school education system consists of 12 years. The first 9 years of education, from elementary school (6 years) to junior high school (3 years), is mandatory in Japan. Mandatory means children must complete this part of their education. The next 3 years are for high school. In Japan, mandatory education starts at age six and ends at age fifteen at the end of junior high school. Almost 90% of students attend public (government) schools, while the other students go to private schools. Private schools are more expensive, but they have better facilities like gyms, computer labs and so on.",
+                    "The Japanese school education system is divided into five sections. Some are optional (students don't need to complete them), and some are mandatory. These are: Nursery school, Kindergarten, Elementary school, Junior high school, and High School. After students graduate from high school, they can choose university or vocational school (where students learn skills that involve working with their hands) for their higher education.",
+                    "When a child becomes a school student, they start spending most of their time at school. The school year starts in April and ends the following year in March. Classes are from Monday to Friday, with extra classes in schools on Saturdays. Parents rarely take their children to school. Students often go to school alone or with their classmates. Some students take the train or bus, while others prefer to ride a bike or walk if they live close to their school. Students never miss classes in Japan, and they always come to classes on time.",
+                    "Schools across Japan don't have facility staff. Students spend 10 to 15 minutes cleaning at the end of every school day. Similarly, right before any vacation, they spend 30 minutes to an hour cleaning the school. They mop the floor, wipe the windows, throw out the trash and arrange the desks. After students finish cleaning, the class leader calls the teacher, who then checks the classroom. If it is clean, students can go home. However, if it is dirty, they must clean it again until the teacher allows them to go. Most Japanese students pick up trash when they see it because they grew up knowing not to leave a mess behind them. Teachers and school staff clean their own offices or areas.",
+                    "Students also spend a lot of time at school because of their club activities. School club activities are a serious business in Japan. It's a chance for students to create friendships and learn self-discipline, but they are known for taking up most of the students' time. Students choose a club to join at the start of their first year, and they rarely change. The most popular sports are baseball and football. Club activities happen all year round. Apart from school clubs, students have other activities throughout the year, such as sports day, school marathons, trips, and school festivals.",
+                    "Each school has different activities, but most schools have a school festival. A school festival, or 'bunkasai', is a unique event where students work together and show off their talents to their families and friends. It is usually the year's biggest event, and students spend months preparing for the big day. It's a fun time and a way to increase their interest in learning and teamwork. During the festival, students use what they've learned in class to create performances and activities for everyone to enjoy. Anyone interested can join in the fun, including students, parents and teachers. Many school festivals feature song or dance performances.",
+                    "Everyone eats the same meal at Japanese public schools. This is different from most countries, where students have the option of buying lunch in a cafeteria or bringing their own lunch boxes. Students in Japan, on the other hand, are encouraged to eat the same type of meal and finish it within a time limit. Students must also serve their own lunch and clean up after themselves. Most Japanese schools don't have cafeterias where students can buy their meals. Students eat their meals with their teachers in their classrooms, which helps to form good relationships between teachers and students. However, sometimes schools allow students to bring a lunch box if it follows the school rules. This is called a 'bento' and must not contain any sweets or any unhealthy food.",
+                    "If all of this sounds like a lot of hard work, many Japanese students also attend optional cram schools ('juku') to catch up on the academic competition. These are special schools which help students improve their grades or pass entrance examinations. These programs start after school, at around 4 p.m. and, depending on the program, can end late in the evening.",
+                    "Students really do spend a lot of their time at school in Japan and the school system is very different to other countries around the world. However, students understand the importance and value of a good education. Success at school can lead to a successful career in the future."
+                ],
+                vocabulary: [
+                    { word: "consists", arabic: "يتكون", definition: "to be made up of parts", example: "The class consists of 20 students." },
+                    { word: "elementary", arabic: "ابتدائي", definition: "basic or primary level", example: "Elementary school is for young children." },
+                    { word: "mandatory", arabic: "إلزامي", definition: "required; must be done", example: "Wearing a uniform is mandatory." },
+                    { word: "complete", arabic: "يكمل", definition: "to finish something", example: "Students must complete their homework." },
+                    { word: "education", arabic: "تعليم", definition: "learning and teaching", example: "Education is important for everyone." },
+                    { word: "public", arabic: "حكومي", definition: "provided by the government", example: "Most students go to public schools." },
+                    { word: "private", arabic: "خاص", definition: "owned by a person or company", example: "Private schools cost more money." },
+                    { word: "expensive", arabic: "غالي", definition: "costing a lot of money", example: "That car is very expensive." },
+                    { word: "facilities", arabic: "مرافق", definition: "buildings or equipment for activities", example: "The school has good sports facilities." },
+                    { word: "optional", arabic: "اختياري", definition: "you can choose to do it or not", example: "The extra homework is optional." },
+                    { word: "graduate", arabic: "يتخرج", definition: "to complete studies successfully", example: "She will graduate next year." },
+                    { word: "vocational", arabic: "مهني", definition: "related to job skills and training", example: "Vocational schools teach practical skills." },
+                    { word: "rarely", arabic: "نادراً", definition: "not often", example: "He rarely misses class." },
+                    { word: "mop", arabic: "يمسح الأرضية", definition: "to clean the floor with water", example: "Students mop the classroom floor daily." },
+                    { word: "wipe", arabic: "يمسح", definition: "to clean by rubbing", example: "Please wipe the desk clean." },
+                    { word: "trash", arabic: "قمامة", definition: "waste or garbage", example: "Put the trash in the bin." },
+                    { word: "arrange", arabic: "يرتب", definition: "to organize or put in order", example: "Arrange the chairs in rows." },
+                    { word: "mess", arabic: "فوضى", definition: "a dirty or untidy state", example: "Clean up this mess." },
+                    { word: "discipline", arabic: "انضباط", definition: "controlled behavior and training", example: "Sports teach self-discipline." },
+                    { word: "friendships", arabic: "صداقات", definition: "relationships between friends", example: "School helps build friendships." },
+                    { word: "throughout", arabic: "طوال", definition: "during all of a period", example: "We study throughout the year." },
+                    { word: "festival", arabic: "مهرجان", definition: "a special celebration or event", example: "The school festival is in May." },
+                    { word: "unique", arabic: "فريد", definition: "special and different", example: "Each school has a unique culture." },
+                    { word: "talents", arabic: "مواهب", definition: "natural skills or abilities", example: "She has talent in music." },
+                    { word: "performances", arabic: "عروض", definition: "shows or presentations", example: "The dance performance was excellent." },
+                    { word: "cafeteria", arabic: "كافيتريا", definition: "a place to buy and eat food", example: "Let's meet in the cafeteria." },
+                    { word: "encouraged", arabic: "مشجع", definition: "given support or confidence", example: "Teachers encourage students to try hard." },
+                    { word: "relationships", arabic: "علاقات", definition: "connections between people", example: "Good relationships help learning." },
+                    { word: "competition", arabic: "منافسة", definition: "trying to be better than others", example: "There is strong academic competition." },
+                    { word: "career", arabic: "مهنة", definition: "a job or profession for life", example: "She wants a career in medicine." }
+                ],
+                vocabActivities: {
+                    matching: [
+                        { word: "mandatory", options: ["اختياري", "إلزامي", "صعب", "سهل"], correct: 1 },
+                        { word: "rarely", options: ["دائماً", "أحياناً", "نادراً", "غالباً"], correct: 2 },
+                        { word: "arrange", options: ["يكسر", "يرمي", "يرتب", "يشتري"], correct: 2 },
+                        { word: "unique", options: ["عادي", "فريد", "قديم", "جديد"], correct: 1 },
+                        { word: "encouraged", options: ["ممنوع", "موقوف", "مشجع", "مكروه"], correct: 2 },
+                        { word: "expensive", options: ["رخيص", "غالي", "مجاني", "قديم"], correct: 1 },
+                        { word: "vocational", options: ["نظري", "مهني", "ديني", "رياضي"], correct: 1 },
+                        { word: "competition", options: ["تعاون", "منافسة", "صداقة", "كسل"], correct: 1 },
+                        { word: "festival", options: ["امتحان", "واجب", "مهرجان", "درس"], correct: 2 },
+                        { word: "career", options: ["هواية", "لعبة", "مهنة", "عطلة"], correct: 2 }
+                    ],
+                    fillBlanks: [
+                        { sentence: "First 9 years are _____.", options: ["optional", "mandatory", "expensive", "free"], correct: 1 },
+                        { sentence: "Schools don't have _____ staff.", options: ["teaching", "facility", "medical", "office"], correct: 1 },
+                        { sentence: "_____ activities build friendships.", options: ["lunch", "club", "vacation", "parent"], correct: 1 },
+                        { sentence: "A _____ shows talents.", options: ["test", "festival", "classroom", "textbook"], correct: 1 },
+                        { sentence: "Cram schools improve _____.", options: ["hobbies", "games", "grades", "sports"], correct: 2 },
+                        { sentence: "School year starts in _____.", options: ["January", "March", "April", "September"], correct: 2 },
+                        { sentence: "Private schools are more _____.", options: ["cheap", "expensive", "fun", "boring"], correct: 1 },
+                        { sentence: "Most schools don't have _____.", options: ["teachers", "students", "cafeterias", "classrooms"], correct: 2 },
+                        { sentence: "Students _____ change clubs.", options: ["always", "often", "rarely", "never"], correct: 2 },
+                        { sentence: "Success leads to a _____.", options: ["hobby", "game", "career", "vacation"], correct: 2 }
+                    ]
+                },
+                paragraphQuestions: [
+                    [
+                        { question: "How many years is the Japanese school system?", options: ["9 years", "10 years", "12 years", "15 years"], correct: 2 },
+                        { question: "What percentage of students attend public schools?", options: ["50%", "70%", "Almost 90%", "100%"], correct: 2 }
+                    ],
+                    [
+                        { question: "How many sections is the Japanese education system divided into?", options: ["Three sections", "Four sections", "Five sections", "Six sections"], correct: 2 },
+                        { question: "What can students choose after high school?", options: ["Only work", "University or vocational school", "Must stop studying", "Only university"], correct: 1 }
+                    ],
+                    [
+                        { question: "When does the Japanese school year start?", options: ["January", "March", "April", "September"], correct: 2 },
+                        { question: "How do most students get to school?", options: ["Parents drive them", "School buses only", "Alone or with classmates", "Teachers pick them up"], correct: 2 }
+                    ],
+                    [
+                        { question: "Who cleans the schools in Japan?", options: ["Professional cleaners", "Students themselves", "Only teachers", "Parents"], correct: 1 },
+                        { question: "How long do students clean before vacations?", options: ["5 minutes", "10-15 minutes", "30 minutes to an hour", "2 hours"], correct: 2 }
+                    ],
+                    [
+                        { question: "What do club activities help students develop?", options: ["Only sports skills", "Friendships and self-discipline", "Only academic skills", "Nothing important"], correct: 1 },
+                        { question: "What are the most popular sports clubs?", options: ["Tennis and swimming", "Basketball and volleyball", "Baseball and football", "Hockey and soccer"], correct: 2 }
+                    ],
+                    [
+                        { question: "What is a 'bunkasai'?", options: ["A type of exam", "A school festival", "A cleaning day", "A sports competition"], correct: 1 },
+                        { question: "Who can attend school festivals?", options: ["Only students", "Only parents", "Students, parents, and teachers", "No one"], correct: 2 }
+                    ],
+                    [
+                        { question: "Where do Japanese students eat lunch?", options: ["In cafeterias", "At home", "In classrooms with teachers", "Outside only"], correct: 2 },
+                        { question: "What is a 'bento'?", options: ["A textbook", "A lunch box", "A school bag", "A uniform"], correct: 1 }
+                    ],
+                    [
+                        { question: "What are 'juku'?", options: ["School uniforms", "School festivals", "Cram schools", "Lunch boxes"], correct: 2 },
+                        { question: "When do juku programs typically start?", options: ["6 a.m.", "Around 4 p.m.", "Midnight", "8 a.m."], correct: 1 }
+                    ],
+                    [
+                        { question: "How is the Japanese school system compared to others?", options: ["Exactly the same", "Slightly similar", "Very different", "Identical"], correct: 2 },
+                        { question: "What can school success lead to?", options: ["Nothing", "A successful career", "Less opportunities", "Punishment"], correct: 1 }
+                    ]
+                ],
+                overallQuestions: [
+                    { question: "Which years are mandatory in Japan?", options: ["All 12", "First 9", "Last 3", "Only elementary"], correct: 1 },
+                    { question: "What percentage attend public schools?", options: ["50%", "70%", "Almost 90%", "100%"], correct: 2 },
+                    { question: "Who cleans the schools?", options: ["Cleaners", "Students", "Teachers only", "Parents"], correct: 1 },
+                    { question: "What is 'bunkasai'?", options: ["Exam", "School festival", "Cleaning day", "Sports"], correct: 1 },
+                    { question: "Based on the passage, what can we infer about Japanese students' attitude toward education?", options: ["They don't care about education", "They take education very seriously and dedicate significant time to it", "They only study when forced", "They prefer playing to studying"], correct: 1, inference: true },
+                    { question: "Why do you think Japanese schools have students clean their own classrooms?", options: ["To save money on cleaners", "To teach responsibility and respect for their environment", "To punish students", "Because teachers are lazy"], correct: 1, inference: true }
+                ]
+            },
+            reading3: {
+                title: "Student Portfolios",
+                vocabularyWords: ["portfolio", "architects", "organized", "folder", "digital", "achievements", "displayed", "collection", "progress", "assignments", "reflections", "consider", "purpose", "platform", "physical", "outdated", "opportunity", "showcase", "responsibility", "reflect", "varied", "evidence", "additional", "resume", "accomplishments", "advantages", "professional", "benefit", "strengths", "weaknesses", "feedback"],
+                paragraphs: [
+                    "Portfolios have been around for a very long time. The word portfolio comes from the Italian word 'portafoglio', which referred to a set of pictures or drawings. They were originally used by artists and architects who organized examples of their work into a folder. These days, modern portfolios are mostly digital and used by students, job seekers, employees and people who want to have their work and achievements displayed in one place. A student portfolio is a collection of a student's work that is put together over time to show their progress, skills, and achievements. It could include examples of projects, assignments, and self-reflections. They can be digital or on paper and depend on the type of course or project students are working on.",
+                    "There are many types of portfolios these days, and it is important for students to consider the purpose of their portfolios and what they want people to see. The first kind of portfolio, and the most common, is a digital portfolio. Most colleges and universities provide students with a digital platform such as Blackboard Learn to display their work. Some students prefer to use websites, while others prefer to use individual blogs. This latter method was once very popular, but it is less common now. There are still those who use physical portfolios like folders and binders, although some people now consider them outdated. Perhaps only artists, photographers and architects keep hard copies of their work these days.",
+                    "Student portfolios give students the opportunity to showcase their skills, knowledge, and improvement in a fun and engaging way. Students must take responsibility for creating their own portfolios. They need to show their best work and decide which projects and assignments reflect their achievements the best. When creating a portfolio, students should collect, save, and organize their work and materials. They also need to think about what material they will include in the portfolio and how it will benefit them. It is surprisingly easy to set up a portfolio: choose samples of your work that are good quality, varied and interesting. However, in a recent study 55% of students felt they did not have enough training to create a portfolio, while just over 60% of students said they did not have enough time to update their portfolios and 45% thought that portfolios were not useful for their courses.",
+                    "Portfolios can be used for many reasons, but the most popular reasons include following a student's progress, grading student work, and collecting evidence that the work has been completed. Teachers can use a portfolio to find areas where a student needs additional study support and practice. It can also be used to check if the student understands the work and if they are on the right learning path. Finally, it provides a location where students can keep their work in one place where they can use it for future job applications or continuing their studies at other colleges and universities. Employers generally request that job candidates send not only a resume but also a link to their digital portfolio because it provides recent proof of their achievements and accomplishments.",
+                    "There are many advantages of having a portfolio for students. Firstly, it puts them in charge of their learning experience. They can also use it when applying for jobs because not only are their achievements grouped together, but they can also be presented to employers in a professional and organized way. Another benefit is that it improves self-reflection because students can look back at what they have completed and discover areas they would like to improve.",
+                    "A portfolio collection of a student's work also has many benefits for teachers. They provide a lot of information in an organized way. They help teachers to think about their own teaching methods and allow them to identify areas to improve their teaching skills and practices. Teachers can also use portfolios to find strengths and weaknesses in their students' work. Then they can give feedback to students and provide extra support where needed.",
+                    "There are many benefits of having a portfolio, so it is important that students start one as soon as possible. Each piece of work that a student completes has value and students can also keep adding work to their portfolio, even after they graduate. In a fast-paced digital world, students need to stay up to date with technology and they need to be ready when opportunities come their way. By quickly being able to access their portfolio online at the press of a button, students will be better able to showcase their abilities, apply for jobs, take further courses at universities, and follow their career paths."
+                ],
+                vocabulary: [
+                    { word: "portfolio", arabic: "ملف أعمال", definition: "a collection of work samples", example: "Create a portfolio to show your projects." },
+                    { word: "architects", arabic: "مهندسون معماريون", definition: "people who design buildings", example: "Architects use portfolios to show their designs." },
+                    { word: "organized", arabic: "منظم", definition: "arranged in an orderly way", example: "Keep your files organized." },
+                    { word: "folder", arabic: "مجلد", definition: "a container for papers", example: "Put the documents in a folder." },
+                    { word: "digital", arabic: "رقمي", definition: "using computer technology", example: "Most portfolios are digital now." },
+                    { word: "achievements", arabic: "إنجازات", definition: "things accomplished successfully", example: "List your achievements on your resume." },
+                    { word: "displayed", arabic: "معروض", definition: "shown to others", example: "Her work is displayed in the gallery." },
+                    { word: "collection", arabic: "مجموعة", definition: "a group of items", example: "He has a collection of essays." },
+                    { word: "progress", arabic: "تقدم", definition: "improvement over time", example: "Your portfolio shows your progress." },
+                    { word: "assignments", arabic: "مهام", definition: "work given by a teacher", example: "Complete all your assignments." },
+                    { word: "reflections", arabic: "تأملات", definition: "thoughts about learning", example: "Write reflections on your work." },
+                    { word: "consider", arabic: "يعتبر", definition: "to think about carefully", example: "Consider all your options." },
+                    { word: "purpose", arabic: "غرض", definition: "the reason for something", example: "What is the purpose of this project?" },
+                    { word: "platform", arabic: "منصة", definition: "a digital system or website", example: "Blackboard is a learning platform." },
+                    { word: "physical", arabic: "مادي", definition: "real and touchable", example: "Keep a physical copy of important files." },
+                    { word: "outdated", arabic: "قديم", definition: "no longer useful or modern", example: "That method is outdated now." },
+                    { word: "opportunity", arabic: "فرصة", definition: "a chance to do something", example: "This is a great opportunity to learn." },
+                    { word: "showcase", arabic: "يعرض", definition: "to display proudly", example: "Showcase your best work." },
+                    { word: "responsibility", arabic: "مسؤولية", definition: "duty to do something", example: "It's your responsibility to complete this." },
+                    { word: "reflect", arabic: "يعكس", definition: "to show or represent", example: "Your work reflects your skills." },
+                    { word: "varied", arabic: "متنوع", definition: "different types", example: "Include varied examples in your portfolio." },
+                    { word: "evidence", arabic: "دليل", definition: "proof of something", example: "The portfolio provides evidence of learning." },
+                    { word: "additional", arabic: "إضافي", definition: "extra; more", example: "You need additional practice." },
+                    { word: "resume", arabic: "سيرة ذاتية", definition: "a document listing work experience", example: "Send your resume with your application." },
+                    { word: "accomplishments", arabic: "إنجازات", definition: "things achieved successfully", example: "List your accomplishments." },
+                    { word: "advantages", arabic: "مزايا", definition: "benefits or good points", example: "There are many advantages to this method." },
+                    { word: "professional", arabic: "محترف", definition: "related to work or showing skill", example: "Present your work in a professional way." },
+                    { word: "benefit", arabic: "فائدة", definition: "an advantage or good result", example: "Exercise has many health benefits." },
+                    { word: "strengths", arabic: "نقاط القوة", definition: "areas where you are skilled", example: "Identify your strengths and weaknesses." },
+                    { word: "weaknesses", arabic: "نقاط الضعف", definition: "areas needing improvement", example: "Work on your weaknesses." },
+                    { word: "feedback", arabic: "ملاحظات", definition: "information about performance", example: "Teachers give feedback on your work." }
+                ],
+                vocabActivities: {
+                    matching: [
+                        { word: "portfolio", options: ["كتاب", "ملف أعمال", "امتحان", "مدرسة"], correct: 1 },
+                        { word: "digital", options: ["قديم", "ورقي", "رقمي", "صعب"], correct: 2 },
+                        { word: "achievements", options: ["فشل", "محاولة", "إنجازات", "أخطاء"], correct: 2 },
+                        { word: "outdated", options: ["جديد", "حديث", "قديم", "مفيد"], correct: 2 },
+                        { word: "professional", options: ["هاوي", "محترف", "طالب", "معلم"], correct: 1 },
+                        { word: "responsibility", options: ["حرية", "مسؤولية", "لعب", "كسل"], correct: 1 },
+                        { word: "showcase", options: ["يخفي", "يعرض", "يكسر", "ينسى"], correct: 1 },
+                        { word: "feedback", options: ["صمت", "ملاحظات", "غياب", "نوم"], correct: 1 },
+                        { word: "organized", options: ["فوضوي", "منظم", "قذر", "مكسور"], correct: 1 },
+                        { word: "evidence", options: ["شك", "دليل", "خوف", "فرح"], correct: 1 }
+                    ],
+                    fillBlanks: [
+                        { sentence: "A _____ collects work samples.", options: ["portfolio", "textbook", "exam", "grade"], correct: 0 },
+                        { sentence: "Most portfolios are _____.", options: ["expensive", "digital", "difficult", "optional"], correct: 1 },
+                        { sentence: "Portfolios _____ skills.", options: ["hide", "forget", "showcase", "ignore"], correct: 2 },
+                        { sentence: "Teachers give _____.", options: ["homework", "tests", "feedback", "punishment"], correct: 2 },
+                        { sentence: "Portfolios provide _____.", options: ["questions", "problems", "evidence", "doubts"], correct: 2 },
+                        { sentence: "Word comes from _____.", options: ["French", "Spanish", "Italian", "English"], correct: 2 },
+                        { sentence: "Students take _____.", options: ["breaks", "responsibility", "vacations", "naps"], correct: 1 },
+                        { sentence: "Work should be _____.", options: ["messy", "lost", "organized", "hidden"], correct: 2 },
+                        { sentence: "Show your _____.", options: ["hobbies", "achievements", "mistakes", "age"], correct: 1 },
+                        { sentence: "Be more _____.", options: ["lazy", "confused", "professional", "careless"], correct: 2 }
+                    ]
+                },
+                paragraphQuestions: [
+                    [
+                        { question: "Where does the word 'portfolio' come from?", options: ["French", "Spanish", "Italian", "German"], correct: 2 },
+                        { question: "Who originally used portfolios?", options: ["Teachers only", "Students only", "Artists and architects", "Scientists"], correct: 2 }
+                    ],
+                    [
+                        { question: "What is the most common type of portfolio today?", options: ["Paper folders", "Digital portfolios", "Binders", "Notebooks"], correct: 1 },
+                        { question: "What do some people think about physical portfolios?", options: ["They are modern", "They are outdated", "They are required", "They are best"], correct: 1 }
+                    ],
+                    [
+                        { question: "Who must take responsibility for creating portfolios?", options: ["Teachers", "Parents", "Students themselves", "The school"], correct: 2 },
+                        { question: "According to the study, what percentage felt they lacked training?", options: ["45%", "55%", "60%", "70%"], correct: 1 }
+                    ],
+                    [
+                        { question: "What is one reason teachers use portfolios?", options: ["To give homework", "To find areas where students need support", "To avoid teaching", "To punish students"], correct: 1 },
+                        { question: "What do employers want to see with resumes?", options: ["Only photographs", "A link to digital portfolio", "Social media only", "Nothing else"], correct: 1 }
+                    ],
+                    [
+                        { question: "What is one advantage of portfolios for students?", options: ["Less work", "Control of their learning experience", "Shorter classes", "No exams"], correct: 1 },
+                        { question: "How should work be presented to employers?", options: ["In a messy way", "In a professional and organized way", "Carelessly", "Randomly"], correct: 1 }
+                    ],
+                    [
+                        { question: "How do portfolios help teachers?", options: ["They don't help", "Help identify areas to improve teaching", "Make teaching harder", "Replace teaching"], correct: 1 },
+                        { question: "What can teachers find through portfolios?", options: ["Only mistakes", "Strengths and weaknesses", "Only strengths", "Nothing"], correct: 1 }
+                    ],
+                    [
+                        { question: "When should students start creating portfolios?", options: ["Never", "After graduation", "As soon as possible", "Only when old"], correct: 2 },
+                        { question: "Can students add work after graduating?", options: ["No, never", "Yes, they can keep adding", "Only for one month", "It is forbidden"], correct: 1 }
+                    ]
+                ],
+                overallQuestions: [
+                    { question: "From which language does 'portfolio' come?", options: ["French", "Spanish", "Italian", "German"], correct: 2 },
+                    { question: "What is the most common type today?", options: ["Physical folder", "Digital portfolio", "Binder", "Notebook"], correct: 1 },
+                    { question: "Who creates the portfolio?", options: ["Teachers", "Parents", "Students themselves", "Schools"], correct: 2 },
+                    { question: "What do employers want with resumes?", options: ["Only photos", "A link to portfolio", "Social media", "Nothing else"], correct: 1 },
+                    { question: "Based on the passage, what can we infer about the future importance of portfolios?", options: ["Portfolios are becoming less important", "Portfolios are essential for career development", "Only artists need portfolios", "Portfolios will disappear"], correct: 1, inference: true },
+                    { question: "Why do you think employers prefer to see portfolios along with resumes?", options: ["Portfolios are easier to delete", "Portfolios provide visual proof of actual work and skills", "Portfolios are expensive", "Resumes are unimportant"], correct: 1, inference: true }
+                ]
+            }
+        };
+
+        // State
+        let state = {
+            currentReading: null,
+            currentSection: null,
+            currentActivity: null,
+            currentParagraph: null,
+            showReading: false,
+            progress: {
                 reading1: { vocab: 0, comprehension: 0 },
                 reading2: { vocab: 0, comprehension: 0 },
                 reading3: { vocab: 0, comprehension: 0 }
-            });
-            const [currentActivity, setCurrentActivity] = useState(null);
-            const [userAnswers, setUserAnswers] = useState({});
-            const [showResults, setShowResults] = useState(false);
-            const [activityScore, setActivityScore] = useState(0);
-            const [cardIndex, setCardIndex] = useState(0);
-            const [flipped, setFlipped] = useState(false);
+            },
+            userAnswers: {},
+            showResults: false,
+            activityScore: 0,
+            cardIndex: 0,
+            flipped: false
+        };
 
-            useEffect(() => {
-                const saved = localStorage.getItem('readingProgress');
-                if (saved) {
-                    try {
-                        setProgress(JSON.parse(saved));
-                    } catch (e) {
-                        console.error('Error loading progress');
-                    }
-                }
-            }, []);
-
-            useEffect(() => {
-                if (currentActivity !== 'flashcards') {
-                    setCardIndex(0);
-                    setFlipped(false);
-                }
-                if (currentActivity === null || currentSection === null) {
-                    setUserAnswers({});
-                    setShowResults(false);
-                    setActivityScore(0);
-                }
-            }, [currentActivity, currentSection]);
-
-            const saveProgress = (newProgress) => {
-                setProgress(newProgress);
-                localStorage.setItem('readingProgress', JSON.stringify(newProgress));
-            };
-
-            const exportProgress = () => {
-                const dataStr = JSON.stringify(progress, null, 2);
-                const dataBlob = new Blob([dataStr], { type: 'application/json' });
-                const url = URL.createObjectURL(dataBlob);
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = 'reading-progress.json';
-                link.click();
-            };
-
-            const importProgress = (event) => {
-                const file = event.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        try {
-                            const imported = JSON.parse(e.target.result);
-                            saveProgress(imported);
-                            alert('Progress imported successfully!');
-                        } catch (error) {
-                            alert('Error importing file.');
-                        }
-                    };
-                    reader.readAsText(file);
-                }
-            };
-
-            const calculateCompletion = () => {
-                let total = 0;
-                let completed = 0;
-                Object.values(progress).forEach(reading => {
-                    Object.values(reading).forEach(score => {
-                        total++;
-                        if (score >= 85) completed++;
-                    });
-                });
-                return { total, completed, percentage: total > 0 ? Math.round((completed / total) * 100) : 0 };
-            };
-
-            const handleSubmit = () => {
-                const readings = getReadings();
-                const activities = getActivities();
-                let currentActivityData;
-                
-                if (currentParagraph !== null) {
-                    currentActivityData = readings[currentReading].paragraphQuestions[currentParagraph];
-                } else if (currentSection === 'comprehension' && currentActivity === 'overall') {
-                    currentActivityData = readings[currentReading].overallQuestions;
-                } else if (currentSection === 'vocab') {
-                    if (currentActivity === 'matching') {
-                        currentActivityData = activities[currentReading].vocab.matching;
-                    } else if (currentActivity === 'fillBlanks') {
-                        currentActivityData = activities[currentReading].vocab.fillBlanks;
-                    }
-                }
-
-                if (!currentActivityData) return;
-
-                let correct = 0;
-                currentActivityData.forEach((q, idx) => {
-                    if (userAnswers[idx] === q.correct) {
-                        correct++;
-                    }
-                });
-
-                const score = Math.round((correct / currentActivityData.length) * 100);
-                setActivityScore(score);
-                setShowResults(true);
-
-                if (currentParagraph === null && currentActivity !== 'flashcards') {
-                    const newProgress = { ...progress };
-                    if (score > newProgress[currentReading][currentSection]) {
-                        newProgress[currentReading][currentSection] = score;
-                        saveProgress(newProgress);
-                    }
-                }
-            };
-
-            const retryActivity = () => {
-                setUserAnswers({});
-                setShowResults(false);
-                setActivityScore(0);
-            };
-
-            const highlightVocabulary = (text, vocabWords) => {
-                let highlightedText = text;
-                vocabWords.forEach(word => {
-                    const regex = new RegExp('\\b(' + word + ')\\b', 'gi');
-                    highlightedText = highlightedText.replace(regex, '<mark class="bg-yellow-200 font-semibold">$1</mark>');
-                });
-                return highlightedText;
-            };
-
-            const getReadings = () => ({
-                reading1: {
-                    title: "Food Science",
-                    vocabularyWords: ["energy", "healthy", "field", "explores", "effect", "chemistry", "biology", "flavor", "sour", "melts"],
-                    paragraphs: [
-                        "From breakfast to dinner, our food gives us energy and keeps us healthy. Have you ever thought about the science behind your favorite foods? Why does the food we love taste so good and keep us strong? Food science is an amazing field that explores what we eat, how we make it, and what effect it has on our minds and bodies.",
-                        "Think of food science as a detective story about what happens to your food, from the farm to your plate. It is a mix of chemistry, biology, and even a little bit of physics. Scientists in this field study how food grows, how we cook it, and how it develops our bodies.",
-                        "Chemistry helps us understand what makes food taste good and why certain foods have special flavors. It allows scientists to discover what makes a tomato sour or why chocolate melts in your mouth."
-                    ],
-                    vocabulary: [
-                        { word: "energy", arabic: "طاقة", definition: "power needed to do work or be active", example: "Food gives us energy to play and study." },
-                        { word: "healthy", arabic: "صحي", definition: "good for your body", example: "Eating vegetables keeps you healthy." },
-                        { word: "field", arabic: "مجال", definition: "an area of study or work", example: "Biology is an interesting field." }
-                    ],
-                    paragraphQuestions: [
-                        [
-                            { question: "What does food give us according to the first sentence?", options: ["Energy and health", "Money and happiness", "Strength only", "Taste only"], correct: 0 },
-                            { question: "What does food science explore?", options: ["Only cooking", "What we eat, how we make it, and its effects", "Only taste", "Only nutrition"], correct: 1 }
-                        ]
-                    ],
-                    overallQuestions: [
-                        { question: "What are the three main sciences that make up food science?", options: ["Chemistry, biology, and physics", "Math, art, and history", "Only chemistry", "Only biology"], correct: 0 },
-                        { question: "Why do biologists work with food?", options: ["To make it taste better only", "To ensure it's safe and stays fresh", "To make it more expensive", "To change its color"], correct: 1 }
-                    ]
-                },
-                reading2: {
-                    title: "The Japanese School Education System",
-                    vocabularyWords: ["consists", "mandatory", "expensive"],
-                    paragraphs: [
-                        "The Japanese school education system consists of 12 years. The first 9 years of education, from elementary school (6 years) to junior high school (3 years), is mandatory in Japan.",
-                        "Students spend a lot of time at school because of their club activities."
-                    ],
-                    vocabulary: [
-                        { word: "consists", arabic: "يتكون", definition: "to be made up of parts", example: "The class consists of 20 students." },
-                        { word: "mandatory", arabic: "إلزامي", definition: "required; must be done", example: "Wearing a uniform is mandatory." }
-                    ],
-                    paragraphQuestions: [
-                        [
-                            { question: "How many years does the Japanese school education system consist of?", options: ["9 years", "10 years", "12 years", "15 years"], correct: 2 }
-                        ]
-                    ],
-                    overallQuestions: [
-                        { question: "Which years of education are mandatory in Japan?", options: ["All 12", "The first 9", "The last 3", "Only elementary"], correct: 1 }
-                    ]
-                },
-                reading3: {
-                    title: "Student Portfolios",
-                    vocabularyWords: ["portfolio", "digital"],
-                    paragraphs: [
-                        "Portfolios have been around for a very long time. The word portfolio comes from the Italian word portafoglio, which referred to a set of pictures or drawings."
-                    ],
-                    vocabulary: [
-                        { word: "portfolio", arabic: "ملف أعمال", definition: "a collection of work samples", example: "Create a portfolio to show your projects." }
-                    ],
-                    paragraphQuestions: [
-                        [
-                            { question: "From which language does the word portfolio originate?", options: ["French", "Spanish", "Italian", "English"], correct: 2 }
-                        ]
-                    ],
-                    overallQuestions: [
-                        { question: "From which language does the word portfolio come?", options: ["French", "Spanish", "Italian", "German"], correct: 2 }
-                    ]
-                }
-            });
-
-            const getActivities = () => ({
-                reading1: {
-                    vocab: {
-                        matching: [
-                            { word: "energy", options: ["قوة", "طاقة", "غذاء", "ماء"], correct: 1 },
-                            { word: "healthy", options: ["مريض", "صحي", "قوي", "ضعيف"], correct: 1 }
-                        ],
-                        fillBlanks: [
-                            { sentence: "Food gives us _____ to study.", options: ["energy", "water", "money", "time"], correct: 0 }
-                        ]
-                    }
-                },
-                reading2: { vocab: { matching: [], fillBlanks: [] } },
-                reading3: { vocab: { matching: [], fillBlanks: [] } }
-            });
-
-            const readings = getReadings();
-            const activities = getActivities();
-            const completion = calculateCompletion();
-            const canGetCertificate = completion.completed === completion.total && completion.total > 0;
-
-            if (!currentReading) {
-                return React.createElement('div', { className: 'min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6' },
-                    React.createElement('div', { className: 'max-w-6xl mx-auto' },
-                        React.createElement('div', { className: 'bg-white rounded-xl shadow-lg p-8 mb-6' },
-                            React.createElement('div', { className: 'flex items-center justify-between mb-4' },
-                                React.createElement('div', { className: 'flex items-center gap-3' },
-                                    React.createElement('div', { className: 'text-indigo-600' }, React.createElement(BookOpenIcon)),
-                                    React.createElement('div', null,
-                                        React.createElement('h1', { className: 'text-3xl font-bold text-gray-800' }, 'GED-100 Reading Hub'),
-                                        React.createElement('p', { className: 'text-gray-600' }, 'Independent Reading Assessment 202520')
-                                    )
-                                ),
-                                React.createElement('div', { className: 'flex gap-2' },
-                                    React.createElement('button', { onClick: exportProgress, className: 'flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition' },
-                                        React.createElement(DownloadIcon),
-                                        'Export'
-                                    ),
-                                    React.createElement('label', { className: 'flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition cursor-pointer' },
-                                        React.createElement(UploadIcon),
-                                        'Import',
-                                        React.createElement('input', { type: 'file', accept: '.json', onChange: importProgress, className: 'hidden' })
-                                    )
-                                )
-                            ),
-                            React.createElement('div', { className: 'mb-4' },
-                                React.createElement('div', { className: 'flex justify-between mb-2' },
-                                    React.createElement('span', { className: 'text-sm font-medium text-gray-700' }, 'Overall Progress'),
-                                    React.createElement('span', { className: 'text-sm font-medium text-indigo-600' }, completion.percentage + '%')
-                                ),
-                                React.createElement('div', { className: 'w-full bg-gray-200 rounded-full h-3' },
-                                    React.createElement('div', { className: 'bg-indigo-600 h-3 rounded-full transition-all duration-500', style: { width: completion.percentage + '%' } })
-                                ),
-                                React.createElement('p', { className: 'text-sm text-gray-600 mt-2' }, completion.completed + ' of ' + completion.total + ' sections completed at 85% or higher')
-                            ),
-                            canGetCertificate && React.createElement('div', { className: 'bg-gradient-to-r from-yellow-50 to-yellow-100 border-2 border-yellow-400 rounded-lg p-4 flex items-center justify-between' },
-                                React.createElement('div', { className: 'flex items-center gap-3' },
-                                    React.createElement('div', { className: 'text-yellow-600' }, React.createElement(AwardIcon)),
-                                    React.createElement('div', null,
-                                        React.createElement('h3', { className: 'font-bold text-yellow-800' }, 'Congratulations!'),
-                                        React.createElement('p', { className: 'text-sm text-yellow-700' }, 'You completed all sections with 85% or higher!')
-                                    )
-                                ),
-                                React.createElement('button', { 
-                                    onClick: () => alert('🎉 Certificate of Completion\n\nYou successfully completed all three reading assessments!\n\nGED-100 Reading Hub'), 
-                                    className: 'px-6 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition font-semibold' 
-                                }, 'Get Certificate')
-                            )
-                        ),
-                        React.createElement('div', { className: 'grid md:grid-cols-3 gap-6' },
-                            ['reading1', 'reading2', 'reading3'].map((readingKey, idx) => {
-                                const reading = readings[readingKey];
-                                const readingProgress = progress[readingKey];
-                                const avgScore = Math.round((readingProgress.vocab + readingProgress.comprehension) / 2);
-
-                                return React.createElement('div', { 
-                                    key: readingKey, 
-                                    className: 'bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all cursor-pointer transform hover:scale-105',
-                                    onClick: () => setCurrentReading(readingKey)
-                                },
-                                    React.createElement('div', { className: 'flex items-start justify-between mb-4' },
-                                        React.createElement('div', { className: 'bg-indigo-100 p-3 rounded-lg text-indigo-600' }, React.createElement(BookIcon)),
-                                        React.createElement('span', { className: 'text-2xl font-bold text-indigo-600' }, idx + 1)
-                                    ),
-                                    React.createElement('h3', { className: 'text-xl font-bold text-gray-800 mb-2' }, reading.title),
-                                    React.createElement('p', { className: 'text-sm text-gray-600 mb-4' }, reading.paragraphs.length + ' paragraphs • ' + reading.vocabulary.length + ' words'),
-                                    React.createElement('div', { className: 'space-y-2 mb-4' },
-                                        React.createElement('div', { className: 'flex justify-between text-xs' },
-                                            React.createElement('span', { className: 'text-gray-600' }, 'Vocabulary'),
-                                            React.createElement('span', { className: readingProgress.vocab >= 85 ? 'text-green-600 font-semibold' : 'text-gray-600' }, readingProgress.vocab + '%')
-                                        ),
-                                        React.createElement('div', { className: 'flex justify-between text-xs' },
-                                            React.createElement('span', { className: 'text-gray-600' }, 'Comprehension'),
-                                            React.createElement('span', { className: readingProgress.comprehension >= 85 ? 'text-green-600 font-semibold' : 'text-gray-600' }, readingProgress.comprehension + '%')
-                                        )
-                                    ),
-                                    React.createElement('div', { className: 'w-full bg-gray-200 rounded-full h-2' },
-                                        React.createElement('div', { className: 'bg-indigo-600 h-2 rounded-full transition-all', style: { width: avgScore + '%' } })
-                                    ),
-                                    React.createElement('p', { className: 'text-xs text-center mt-2 text-gray-600' }, 'Average: ' + avgScore + '%')
-                                );
-                            })
-                        )
-                    )
-                );
+        // Load progress
+        function loadProgress() {
+            const saved = localStorage.getItem('ged100Progress');
+            if (saved) {
+                state.progress = JSON.parse(saved);
             }
-
-            const reading = readings[currentReading];
-
-            return React.createElement('div', { className: 'min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6' },
-                React.createElement('div', { className: 'max-w-4xl mx-auto' },
-                    React.createElement('button', { 
-                        onClick: () => setCurrentReading(null), 
-                        className: 'flex items-center gap-2 text-indigo-600 hover:text-indigo-800 mb-6 px-4 py-2 bg-white rounded-lg shadow' 
-                    },
-                        React.createElement(HomeIcon),
-                        'Back to Home'
-                    ),
-                    React.createElement('div', { className: 'bg-white rounded-xl shadow-lg p-8' },
-                        React.createElement('h2', { className: 'text-3xl font-bold text-gray-800 mb-6' }, reading.title),
-                        React.createElement('div', { className: 'mb-8' },
-                            React.createElement('h3', { className: 'text-2xl font-bold text-gray-800 mb-4' }, 'Reading Passages'),
-                            reading.paragraphs.map((para, idx) =>
-                                React.createElement('div', { key: idx, className: 'border-2 border-gray-200 rounded-lg p-4 mb-3' },
-                                    React.createElement('div', { className: 'flex items-start gap-3' },
-                                        React.createElement('span', { className: 'flex-shrink-0 w-8 h-8 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold text-sm' }, idx + 1),
-                                        React.createElement('p', { 
-                                            className: 'text-gray-700 leading-relaxed',
-                                            dangerouslySetInnerHTML: { __html: highlightVocabulary(para, reading.vocabularyWords) }
-                                        })
-                                    )
-                                )
-                            )
-                        ),
-                        React.createElement('div', null,
-                            React.createElement('h3', { className: 'text-2xl font-bold text-gray-800 mb-4' }, 'Vocabulary (' + reading.vocabulary.length + ' words)'),
-                            reading.vocabulary.map((vocab, idx) =>
-                                React.createElement('div', { key: idx, className: 'border-2 border-indigo-200 rounded-lg p-4 mb-3' },
-                                    React.createElement('div', { className: 'flex justify-between items-start mb-2' },
-                                        React.createElement('span', { className: 'text-xl font-bold text-indigo-600' }, vocab.word),
-                                        React.createElement('span', { className: 'text-xl text-gray-600' }, vocab.arabic)
-                                    ),
-                                    React.createElement('p', { className: 'text-gray-700 mb-1' },
-                                        React.createElement('strong', null, 'Definition: '),
-                                        vocab.definition
-                                    ),
-                                    React.createElement('p', { className: 'text-gray-600 italic' }, '"' + vocab.example + '"')
-                                )
-                            )
-                        )
-                    )
-                )
-            );
         }
 
-        ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(ReadingComprehensionHub));
+        function saveProgress() {
+            localStorage.setItem('ged100Progress', JSON.stringify(state.progress));
+        }
+
+        function exportProgress() {
+            const dataStr = JSON.stringify(state.progress, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'reading-progress.json';
+            link.click();
+        }
+
+        function importProgress(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        state.progress = JSON.parse(e.target.result);
+                        saveProgress();
+                        alert('Progress imported successfully!');
+                        render();
+                    } catch (error) {
+                        alert('Error importing file.');
+                    }
+                };
+                reader.readAsText(file);
+            }
+        }
+
+        function calculateCompletion() {
+            let total = 6; // 3 readings × 2 sections
+            let completed = 0;
+            Object.values(state.progress).forEach(reading => {
+                if (reading.vocab >= 85) completed++;
+                if (reading.comprehension >= 85) completed++;
+            });
+            return { total, completed, percentage: Math.round((completed / total) * 100) };
+        }
+
+        function highlightVocabulary(text, words) {
+            let result = text;
+            words.forEach(word => {
+                const regex = new RegExp(`\\b(${word})\\b`, 'gi');
+                result = result.replace(regex, '<span class="vocab-word">$1</span>');
+            });
+            return result;
+        }
+
+        // Render functions
+        function renderHome() {
+            const completion = calculateCompletion();
+            const canGetCertificate = completion.completed === completion.total;
+
+            return `
+                <div class="export-import">
+                    <button class="export-btn" onclick="exportProgress()">📥 Export Progress</button>
+                    <label class="import-btn" style="cursor: pointer;">
+                        📤 Import Progress
+                        <input type="file" accept=".json" onchange="importProgress(event)">
+                    </label>
+                </div>
+
+                <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
+                    <h2 style="margin-bottom: 16px; color: #1f2937;">Overall Progress</h2>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${completion.percentage}%"></div>
+                    </div>
+                    <p style="text-align: center; color: #6b7280; margin-top: 8px;">
+                        ${completion.completed} of ${completion.total} sections completed at 85% or higher (${completion.percentage}%)
+                    </p>
+                </div>
+
+                ${canGetCertificate ? `
+                    <div class="alert alert-success" style="text-align: center;">
+                        <h3 style="margin-bottom: 12px;">🎉 Congratulations!</h3>
+                        <p style="margin-bottom: 16px;">You completed all sections with 85% or higher!</p>
+                        <button class="btn" onclick="alert('🎓 Certificate of Completion\\n\\nYou successfully completed all GED-100 Reading Assessments!\\n\\nDate: ${new Date().toLocaleDateString()}')">
+                            Get Certificate
+                        </button>
+                    </div>
+                ` : ''}
+
+                <div class="reading-grid">
+                    ${Object.keys(readings).map((key, idx) => {
+                        const reading = readings[key];
+                        const prog = state.progress[key];
+                        const avg = Math.round((prog.vocab + prog.comprehension) / 2);
+                        return `
+                            <div class="reading-card" onclick="selectReading('${key}')">
+                                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
+                                    <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5em; font-weight: bold;">
+                                        ${idx + 1}
+                                    </div>
+                                </div>
+                                <h3>${reading.title}</h3>
+                                <p>${reading.paragraphs.length} paragraphs • ${reading.vocabulary.length} vocab words</p>
+                                <div class="progress-info">
+                                    <div>
+                                        <span>Vocabulary</span>
+                                        <span style="color: ${prog.vocab >= 85 ? '#10b981' : '#6b7280'}; font-weight: ${prog.vocab >= 85 ? 'bold' : 'normal'};">${prog.vocab}%</span>
+                                    </div>
+                                    <div>
+                                        <span>Comprehension</span>
+                                        <span style="color: ${prog.comprehension >= 85 ? '#10b981' : '#6b7280'}; font-weight: ${prog.comprehension >= 85 ? 'bold' : 'normal'};">${prog.comprehension}%</span>
+                                    </div>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: ${avg}%"></div>
+                                </div>
+                                <p style="text-align: center; font-size: 0.9em; color: #6b7280; margin-top: 8px;">Average: ${avg}%</p>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        function renderReadingMenu() {
+            const reading = readings[state.currentReading];
+            const prog = state.progress[state.currentReading];
+
+            return `
+                <button class="back-btn" onclick="backToHome()">← Back to Home</button>
+                
+                <div style="background: white; border-radius: 12px; padding: 32px;">
+                    <h2 style="margin-bottom: 24px; color: #1f2937; font-size: 2em;">${reading.title}</h2>
+
+                    <button class="btn btn-blue" onclick="showReadingText()" style="width: 100%; margin-bottom: 24px;">
+                        📖 Read the Text with Highlighted Vocabulary
+                    </button>
+
+                    <div class="activity-grid">
+                        <div class="activity-option" onclick="selectSection('vocab')">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <h3>📚 Vocabulary Practice</h3>
+                                    <p>${reading.vocabulary.length} words with Arabic translations</p>
+                                </div>
+                                ${prog.vocab >= 85 ? '<span style="color: #10b981; font-size: 2em;">✓</span>' : ''}
+                            </div>
+                            <div class="progress-bar" style="margin-top: 16px;">
+                                <div class="progress-fill" style="width: ${prog.vocab}%"></div>
+                            </div>
+                            <p style="text-align: center; margin-top: 8px; color: #6b7280;">Best: ${prog.vocab}%</p>
+                        </div>
+
+                        <div class="activity-option" onclick="selectSection('comprehension')">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <h3>✅ Comprehension Questions</h3>
+                                    <p>Practice + ${reading.overallQuestions.length} graded questions</p>
+                                </div>
+                                ${prog.comprehension >= 85 ? '<span style="color: #10b981; font-size: 2em;">✓</span>' : ''}
+                            </div>
+                            <div class="progress-bar" style="margin-top: 16px;">
+                                <div class="progress-fill" style="width: ${prog.comprehension}%; background: linear-gradient(90deg, #10b981, #059669);"></div>
+                            </div>
+                            <p style="text-align: center; margin-top: 8px; color: #6b7280;">Best: ${prog.comprehension}%</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderReadingText() {
+            const reading = readings[state.currentReading];
+            return `
+                <button class="back-btn" onclick="hideReadingText()">← Back to Activities</button>
+                
+                <div style="background: white; border-radius: 12px; padding: 32px;">
+                    <h2 style="text-align: center; margin-bottom: 24px; color: #1f2937;">${reading.title}</h2>
+                    
+                    <div class="alert alert-warning">
+                        <strong>📚 Tip:</strong> Words highlighted in <span class="vocab-word">yellow</span> are vocabulary words!
+                    </div>
+
+                    <div class="reading-text">
+                        ${reading.paragraphs.map((para, idx) => `
+                            <div style="display: flex; gap: 16px; margin-bottom: 24px;">
+                                <div style="flex-shrink: 0; width: 32px; height: 32px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                                    ${idx + 1}
+                                </div>
+                                <p style="flex: 1;">${highlightVocabulary(para, reading.vocabularyWords)}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderActivityMenu() {
+            const reading = readings[state.currentReading];
+            
+            if (state.currentSection === 'vocab') {
+                return `
+                    <button class="back-btn" onclick="backToReadingMenu()">← Back</button>
+                    
+                    <div style="background: white; border-radius: 12px; padding: 32px;">
+                        <h2 style="margin-bottom: 24px; color: #1f2937;">Vocabulary Practice</h2>
+                        
+                        <div class="activity-grid">
+                            <div class="activity-option" onclick="startActivity('flashcards')">
+                                <h3>📚 Flashcards</h3>
+                                <p>Study ${reading.vocabulary.length} vocabulary words</p>
+                            </div>
+                            
+                            <div class="activity-option" onclick="startActivity('matching')">
+                                <h3>🎯 Matching Exercise (Graded)</h3>
+                                <p>Match words with their Arabic translations</p>
+                            </div>
+                            
+                            <div class="activity-option" onclick="startActivity('fillBlanks')">
+                                <h3>✍️ Fill in the Blanks (Graded)</h3>
+                                <p>Complete sentences with vocabulary words</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                return `
+                    <button class="back-btn" onclick="backToReadingMenu()">← Back</button>
+                    
+                    <div style="background: white; border-radius: 12px; padding: 32px;">
+                        <h2 style="margin-bottom: 16px; color: #1f2937;">Comprehension Questions</h2>
+                        
+                        <div class="alert alert-info">
+                            <strong>Instructions:</strong> Practice with paragraph questions first, then take the ${reading.overallQuestions.length}-question quiz!
+                        </div>
+
+                        <div class="activity-grid">
+                            <div style="border: 2px solid #e5e7eb; border-radius: 12px; padding: 24px;">
+                                <h3 style="margin-bottom: 16px;">Practice: Paragraph Questions</h3>
+                                <p style="color: #6b7280; margin-bottom: 16px;">Not graded - for practice only</p>
+                                <div class="paragraph-grid">
+                                    ${reading.paragraphs.map((_, idx) => `
+                                        <button class="paragraph-btn" onclick="startParagraphPractice(${idx})">
+                                            Para ${idx + 1}
+                                        </button>
+                                    `).join('')}
+                                </div>
+                            </div>
+
+                            <div class="activity-option" onclick="startActivity('overall')">
+                                <h3>📝 Overall Quiz (Graded)</h3>
+                                <p>${reading.overallQuestions.length} questions - Need 85% to pass!</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function renderFlashcards() {
+            const vocab = readings[state.currentReading].vocabulary;
+            const card = vocab[state.cardIndex];
+
+            return `
+                <button class="back-btn" onclick="backToActivityMenu()">← Back</button>
+                
+                <div style="background: white; border-radius: 12px; padding: 32px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                        <h2 style="color: #1f2937;">Vocabulary Flashcards</h2>
+                        <span style="color: #667eea; font-weight: bold; font-size: 1.2em;">${state.cardIndex + 1} / ${vocab.length}</span>
+                    </div>
+
+                    <div class="flashcard-container">
+                        <div class="flashcard ${state.flipped ? 'flipped' : ''}" onclick="flipCard()">
+                            <div class="flashcard-front">
+                                <h2>${card.word}</h2>
+                                <p style="opacity: 0.8; margin-top: 20px;">Click to flip</p>
+                            </div>
+                            <div class="flashcard-back">
+                                <h2>${card.arabic}</h2>
+                                <div style="border-top: 2px solid rgba(255,255,255,0.3); margin: 24px 0;"></div>
+                                <p style="font-size: 1.1em; margin-bottom: 12px;"><strong>Definition:</strong> ${card.definition}</p>
+                                <p style="font-size: 1.1em;"><strong>Example:</strong> ${card.example}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="nav-controls">
+                        <button class="btn" onclick="prevCard()" ${state.cardIndex === 0 ? 'disabled' : ''}>
+                            ← Previous
+                        </button>
+                        <button class="btn" onclick="nextCard()" ${state.cardIndex === vocab.length - 1 ? 'disabled' : ''}>
+                            Next →
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderGradedActivity() {
+            const reading = readings[state.currentReading];
+            let questions, title;
+
+            if (state.currentActivity === 'matching') {
+                questions = reading.vocabActivities.matching;
+                title = 'Matching Exercise';
+            } else if (state.currentActivity === 'fillBlanks') {
+                questions = reading.vocabActivities.fillBlanks;
+                title = 'Fill in the Blanks';
+            } else {
+                questions = reading.overallQuestions;
+                title = 'Overall Comprehension Quiz';
+            }
+
+            return `
+                <button class="back-btn" onclick="backToActivityMenu()">← Back</button>
+                
+                <div style="background: white; border-radius: 12px; padding: 32px;">
+                    <h2 style="margin-bottom: 16px; color: #1f2937;">${title}</h2>
+                    
+                    <div class="alert alert-warning">
+                        <strong>⚠️ Graded Activity</strong> - Need 85% to pass!
+                    </div>
+
+                    ${questions.map((q, idx) => {
+                        const questionText = q.word ? `Match: ${q.word}` : (q.question || q.sentence);
+                        const isInference = q.inference;
+                        return `
+                            <div class="question-block">
+                                <p class="question-text">
+                                    ${idx + 1}. ${questionText}
+                                    ${isInference ? '<em style="color: #667eea;"> (Inference question)</em>' : ''}
+                                </p>
+                                ${q.options.map((opt, optIdx) => `
+                                    <div class="option ${state.userAnswers[idx] === optIdx ? 'selected' : ''}" 
+                                         onclick="selectAnswer(${idx}, ${optIdx})">
+                                        <input type="radio" name="q${idx}" ${state.userAnswers[idx] === optIdx ? 'checked' : ''}>
+                                        <span>${opt}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                    }).join('')}
+
+                    <button class="btn" style="width: 100%;" onclick="submitGradedActivity()" 
+                            ${Object.keys(state.userAnswers).length !== questions.length ? 'disabled' : ''}>
+                        Submit for Grading
+                    </button>
+                </div>
+            `;
+        }
+
+        function renderParagraphPractice() {
+            const reading = readings[state.currentReading];
+            const questions = reading.paragraphQuestions[state.currentParagraph];
+            const para = reading.paragraphs[state.currentParagraph];
+
+            return `
+                <button class="back-btn" onclick="backFromParagraph()">← Back</button>
+                
+                <div style="background: white; border-radius: 12px; padding: 32px;">
+                    <h2 style="margin-bottom: 24px; color: #1f2937;">Paragraph ${state.currentParagraph + 1} - Practice</h2>
+                    
+                    <div class="alert alert-info">
+                        <p><strong>Paragraph ${state.currentParagraph + 1}:</strong></p>
+                        <p style="margin-top: 12px; line-height: 1.6;">${para}</p>
+                    </div>
+
+                    ${questions.map((q, idx) => `
+                        <div class="question-block">
+                            <p class="question-text">${idx + 1}. ${q.question}</p>
+                            ${q.options.map((opt, optIdx) => `
+                                <div class="option ${state.userAnswers[idx] === optIdx ? 'selected' : ''}" 
+                                     onclick="selectAnswer(${idx}, ${optIdx})">
+                                    <input type="radio" name="q${idx}" ${state.userAnswers[idx] === optIdx ? 'checked' : ''}>
+                                    <span>${opt}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `).join('')}
+
+                    <button class="btn" style="width: 100%;" onclick="submitParagraphPractice()" 
+                            ${Object.keys(state.userAnswers).length !== questions.length ? 'disabled' : ''}>
+                        Check Answers
+                    </button>
+                </div>
+            `;
+        }
+
+        function renderResults() {
+            const isPractice = state.currentParagraph !== null;
+            const passed = state.activityScore >= 85;
+
+            return `
+                <div style="max-width: 600px; margin: 0 auto;">
+                    <div class="score-display">
+                        <div style="font-size: 4em; margin-bottom: 16px;">
+                            ${passed ? '✅' : (isPractice ? '📚' : '❌')}
+                        </div>
+                        <h2>${passed ? 'Excellent!' : (isPractice ? 'Keep Practicing!' : 'Try Again!')}</h2>
+                        <div class="score-number">${state.activityScore}%</div>
+                        <p style="font-size: 1.2em;">${isPractice ? 'Practice only - not graded' : (passed ? 'You passed! Progress saved.' : 'Need 85% to pass.')}</p>
+                    </div>
+
+                    <div style="display: flex; gap: 16px; justify-content: center; margin-top: 24px;">
+                        <button class="btn" onclick="retryActivity()">
+                            🔄 Try Again
+                        </button>
+                        <button class="btn" style="background: #6c757d;" onclick="backFromResults()">
+                            Back
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Navigation functions
+        function selectReading(key) {
+            state.currentReading = key;
+            state.currentSection = null;
+            state.currentActivity = null;
+            state.showReading = false;
+            render();
+        }
+
+        function backToHome() {
+            state.currentReading = null;
+            render();
+        }
+
+        function showReadingText() {
+            state.showReading = true;
+            render();
+        }
+
+        function hideReadingText() {
+            state.showReading = false;
+            render();
+        }
+
+        function selectSection(section) {
+            state.currentSection = section;
+            state.currentActivity = null;
+            render();
+        }
+
+        function backToReadingMenu() {
+            state.currentSection = null;
+            state.currentActivity = null;
+            state.userAnswers = {};
+            state.showResults = false;
+            render();
+        }
+
+        function startActivity(activity) {
+            state.currentActivity = activity;
+            state.userAnswers = {};
+            state.showResults = false;
+            state.cardIndex = 0;
+            state.flipped = false;
+            render();
+        }
+
+        function backToActivityMenu() {
+            state.currentActivity = null;
+            state.userAnswers = {};
+            state.showResults = false;
+            render();
+        }
+
+        function startParagraphPractice(idx) {
+            state.currentParagraph = idx;
+            state.userAnswers = {};
+            state.showResults = false;
+            render();
+        }
+
+        function backFromParagraph() {
+            state.currentParagraph = null;
+            state.userAnswers = {};
+            state.showResults = false;
+            render();
+        }
+
+        function backFromResults() {
+            if (state.currentParagraph !== null) {
+                state.currentParagraph = null;
+            } else {
+                state.currentActivity = null;
+            }
+            state.userAnswers = {};
+            state.showResults = false;
+            render();
+        }
+
+        // Interaction functions
+        function selectAnswer(qIdx, optIdx) {
+            state.userAnswers[qIdx] = optIdx;
+            render();
+        }
+
+        function flipCard() {
+            state.flipped = !state.flipped;
+            render();
+        }
+
+        function nextCard() {
+            const vocab = readings[state.currentReading].vocabulary;
+            if (state.cardIndex < vocab.length - 1) {
+                state.cardIndex++;
+                state.flipped = false;
+                render();
+            }
+        }
+
+        function prevCard() {
+            if (state.cardIndex > 0) {
+                state.cardIndex--;
+                state.flipped = false;
+                render();
+            }
+        }
+
+        function submitParagraphPractice() {
+            const reading = readings[state.currentReading];
+            const questions = reading.paragraphQuestions[state.currentParagraph];
+            
+            let correct = 0;
+            questions.forEach((q, idx) => {
+                if (state.userAnswers[idx] === q.correct) {
+                    correct++;
+                }
+            });
+
+            state.activityScore = Math.round((correct / questions.length) * 100);
+            state.showResults = true;
+            render();
+        }
+
+        function submitGradedActivity() {
+            const reading = readings[state.currentReading];
+            let questions;
+
+            if (state.currentActivity === 'matching') {
+                questions = reading.vocabActivities.matching;
+            } else if (state.currentActivity === 'fillBlanks') {
+                questions = reading.vocabActivities.fillBlanks;
+            } else {
+                questions = reading.overallQuestions;
+            }
+
+            let correct = 0;
+            questions.forEach((q, idx) => {
+                if (state.userAnswers[idx] === q.correct) {
+                    correct++;
+                }
+            });
+
+            state.activityScore = Math.round((correct / questions.length) * 100);
+            state.showResults = true;
+
+            // Save progress if passed
+            if (state.activityScore >= 85) {
+                const section = state.currentActivity === 'overall' ? 'comprehension' : 'vocab';
+                if (state.activityScore > state.progress[state.currentReading][section]) {
+                    state.progress[state.currentReading][section] = state.activityScore;
+                    saveProgress();
+                }
+            }
+
+            render();
+        }
+
+        function retryActivity() {
+            state.userAnswers = {};
+            state.showResults = false;
+            render();
+        }
+
+        // Main render
+        function render() {
+            const app = document.getElementById('app');
+            
+            if (state.showResults) {
+                app.innerHTML = renderResults();
+            } else if (state.currentParagraph !== null) {
+                app.innerHTML = renderParagraphPractice();
+            } else if (state.currentActivity === 'flashcards') {
+                app.innerHTML = renderFlashcards();
+            } else if (state.currentActivity) {
+                app.innerHTML = renderGradedActivity();
+            } else if (state.currentSection) {
+                app.innerHTML = renderActivityMenu();
+            } else if (state.showReading) {
+                app.innerHTML = renderReadingText();
+            } else if (state.currentReading) {
+                app.innerHTML = renderReadingMenu();
+            } else {
+                app.innerHTML = renderHome();
+            }
+        }
+
+        // Initialize
+        loadProgress();
+        render();
     </script>
 </body>
 </html>
