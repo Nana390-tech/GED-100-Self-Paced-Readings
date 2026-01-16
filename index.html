@@ -583,7 +583,10 @@
                     { question: "What information do food labels provide?", options: ["Only the price", "Calories, ingredients, and allergens", "Only the brand name", "Only recipes"], correct: 1 },
                     { question: "What is one major challenge food science faces?", options: ["Too many workers", "Food shortage", "Too much research", "Lack of technology"], correct: 1 },
                     { question: "Based on the text, what can we infer about the role of food science in addressing global food problems?", options: ["Food science has no role in solving food problems", "Food science is actively working to solve issues like food shortage and environmental damage", "Food science only focuses on taste", "Food science ignores environmental concerns"], correct: 1, inference: true },
-                    { question: "Why do you think the text compares food science to a detective story?", options: ["Because food scientists wear detective hats", "Because food science involves investigation and discovery about how food works", "Because food science is boring", "Because detectives study food"], correct: 1, inference: true }
+                    { question: "Why do you think the text compares food science to a detective story?", options: ["Because food scientists wear detective hats", "Because food science involves investigation and discovery about how food works", "Because food science is boring", "Because detectives study food"], correct: 1, inference: true },
+                    { question: "According to the passage, what happens when we cook raw rice?", options: ["It stays hard", "It becomes soft", "It disappears", "It becomes crunchy"], correct: 1 },
+                    { question: "What do 'best before' dates on food packages indicate?", options: ["The manufacturing date only", "Whether the food is fresh and safe to eat", "The store's profit margin", "When the food was planted"], correct: 1 },
+                    { question: "Based on the information about future food science, what can we infer about scientists' approach to innovation?", options: ["They only care about traditional methods", "They are exploring new technologies while considering environmental impact", "They want to eliminate all farms", "They are not interested in laboratory-grown food"], correct: 1, inference: true }
                 ]
             },
             reading2: {
@@ -702,7 +705,11 @@
                     { question: "Who cleans the schools?", options: ["Cleaners", "Students", "Teachers only", "Parents"], correct: 1 },
                     { question: "What is 'bunkasai'?", options: ["Exam", "School festival", "Cleaning day", "Sports"], correct: 1 },
                     { question: "Based on the passage, what can we infer about Japanese students' attitude toward education?", options: ["They don't care about education", "They take education very seriously and dedicate significant time to it", "They only study when forced", "They prefer playing to studying"], correct: 1, inference: true },
-                    { question: "Why do you think Japanese schools have students clean their own classrooms?", options: ["To save money on cleaners", "To teach responsibility and respect for their environment", "To punish students", "Because teachers are lazy"], correct: 1, inference: true }
+                    { question: "Why do you think Japanese schools have students clean their own classrooms?", options: ["To save money on cleaners", "To teach responsibility and respect for their environment", "To punish students", "Because teachers are lazy"], correct: 1, inference: true },
+                    { question: "When does the Japanese school year begin?", options: ["January", "March", "April", "September"], correct: 2 },
+                    { question: "What are 'juku' schools?", options: ["Sports academies", "Music schools", "Cram schools for improving grades", "Art schools"], correct: 2 },
+                    { question: "Based on how students eat lunch with teachers in classrooms, what can we infer about Japanese education values?", options: ["They want to save money on cafeterias", "They value building strong teacher-student relationships", "They don't trust students to eat alone", "They have no other space available"], correct: 1, inference: true },
+                    { question: "What can students choose after graduating from high school?", options: ["Only university", "Only work", "University or vocational school", "Must stop studying"], correct: 2 }
                 ]
             },
             reading3: {
@@ -812,7 +819,11 @@
                     { question: "Who creates the portfolio?", options: ["Teachers", "Parents", "Students themselves", "Schools"], correct: 2 },
                     { question: "What do employers want with resumes?", options: ["Only photos", "A link to portfolio", "Social media", "Nothing else"], correct: 1 },
                     { question: "Based on the passage, what can we infer about the future importance of portfolios?", options: ["Portfolios are becoming less important", "Portfolios are essential for career development", "Only artists need portfolios", "Portfolios will disappear"], correct: 1, inference: true },
-                    { question: "Why do you think employers prefer to see portfolios along with resumes?", options: ["Portfolios are easier to delete", "Portfolios provide visual proof of actual work and skills", "Portfolios are expensive", "Resumes are unimportant"], correct: 1, inference: true }
+                    { question: "Why do you think employers prefer to see portfolios along with resumes?", options: ["Portfolios are easier to delete", "Portfolios provide visual proof of actual work and skills", "Portfolios are expensive", "Resumes are unimportant"], correct: 1, inference: true },
+                    { question: "According to the study mentioned, what percentage of students felt they lacked training in creating portfolios?", options: ["45%", "55%", "60%", "70%"], correct: 1 },
+                    { question: "What is one benefit of portfolios for teachers?", options: ["Less work for them", "Help identify areas to improve their own teaching methods", "They don't need to grade", "They can ignore students"], correct: 1 },
+                    { question: "When should students start creating a portfolio?", options: ["After graduation", "In their final year", "As soon as possible", "Never"], correct: 2 },
+                    { question: "Based on the text's emphasis on staying 'up to date with technology,' what can we infer about the modern job market?", options: ["Traditional paper portfolios are preferred", "Digital skills and online presence are increasingly important", "Technology doesn't matter for careers", "Only IT jobs need digital portfolios"], correct: 1, inference: true }
                 ]
             }
         };
@@ -1154,6 +1165,94 @@
                 title = 'Overall Comprehension Quiz';
             }
 
+            // Get reading image based on topic
+            const getReadingImage = () => {
+                if (state.currentReading === 'reading1') {
+                    return 'https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=800&h=400&fit=crop'; // Food science
+                } else if (state.currentReading === 'reading2') {
+                    return 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&h=400&fit=crop'; // Japanese school
+                } else {
+                    return 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=800&h=400&fit=crop'; // Portfolio/laptop
+                }
+            };
+
+            // For comprehension quiz, show full reading text with image
+            if (state.currentActivity === 'overall') {
+                return `
+                    <button class="back-btn" onclick="backToActivityMenu()">← Back</button>
+                    
+                    <div style="display: grid; gap: 20px; grid-template-columns: 1fr 1fr;">
+                        <!-- Reading Text Column -->
+                        <div style="background: white; border-radius: 12px; overflow: hidden; position: sticky; top: 20px; height: fit-content; max-height: 90vh; overflow-y: auto;">
+                            <img src="${getReadingImage()}" alt="${reading.title}" style="width: 100%; height: 250px; object-fit: cover;">
+                            <div style="padding: 32px;">
+                                <h3 style="color: #667eea; margin-bottom: 16px; font-size: 1.5em;">📖 ${reading.title}</h3>
+                                <div class="alert alert-info" style="margin-bottom: 20px;">
+                                    <strong>💡 Tip:</strong> Keep this reading visible as you answer questions on the right!
+                                </div>
+                                <div class="reading-text">
+                                    ${reading.paragraphs.map((para, idx) => `
+                                        <div style="display: flex; gap: 16px; margin-bottom: 24px;">
+                                            <div style="flex-shrink: 0; width: 32px; height: 32px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9em;">
+                                                ${idx + 1}
+                                            </div>
+                                            <p style="flex: 1; line-height: 1.8; text-align: justify;">${highlightVocabulary(para, reading.vocabularyWords)}</p>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Questions Column -->
+                        <div style="background: white; border-radius: 12px; padding: 32px;">
+                            <h2 style="margin-bottom: 16px; color: #1f2937;">${title}</h2>
+                            
+                            <div class="alert alert-warning">
+                                <strong>⚠️ Graded Activity</strong> - Need 85% to pass!
+                            </div>
+
+                            ${questions.map((q, idx) => {
+                                const questionText = q.question;
+                                const isInference = q.inference;
+                                return `
+                                    <div class="question-block">
+                                        <p class="question-text">
+                                            ${idx + 1}. ${questionText}
+                                            ${isInference ? '<em style="color: #667eea;"> (Inference question)</em>' : ''}
+                                        </p>
+                                        ${q.options.map((opt, optIdx) => `
+                                            <div class="option ${state.userAnswers[idx] === optIdx ? 'selected' : ''}" 
+                                                 onclick="selectAnswer(${idx}, ${optIdx})">
+                                                <input type="radio" name="q${idx}" ${state.userAnswers[idx] === optIdx ? 'checked' : ''}>
+                                                <span>${opt}</span>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                `;
+                            }).join('')}
+
+                            <button class="btn" style="width: 100%;" onclick="submitGradedActivity()" 
+                                    ${Object.keys(state.userAnswers).length !== questions.length ? 'disabled' : ''}>
+                                Submit for Grading
+                            </button>
+                        </div>
+                    </div>
+
+                    <style>
+                        @media (max-width: 768px) {
+                            div[style*="grid-template-columns: 1fr 1fr"] {
+                                grid-template-columns: 1fr !important;
+                            }
+                            div[style*="position: sticky"] {
+                                position: static !important;
+                                max-height: none !important;
+                            }
+                        }
+                    </style>
+                `;
+            }
+
+            // For vocabulary activities, regular layout
             return `
                 <button class="back-btn" onclick="backToActivityMenu()">← Back</button>
                 
@@ -1166,13 +1265,9 @@
 
                     ${questions.map((q, idx) => {
                         const questionText = q.word ? `Match: ${q.word}` : (q.question || q.sentence);
-                        const isInference = q.inference;
                         return `
                             <div class="question-block">
-                                <p class="question-text">
-                                    ${idx + 1}. ${questionText}
-                                    ${isInference ? '<em style="color: #667eea;"> (Inference question)</em>' : ''}
-                                </p>
+                                <p class="question-text">${idx + 1}. ${questionText}</p>
                                 ${q.options.map((opt, optIdx) => `
                                     <div class="option ${state.userAnswers[idx] === optIdx ? 'selected' : ''}" 
                                          onclick="selectAnswer(${idx}, ${optIdx})">
@@ -1204,9 +1299,11 @@
                     <h2 style="margin-bottom: 24px; color: #1f2937;">Paragraph ${state.currentParagraph + 1} - Practice</h2>
                     
                     <div class="alert alert-info">
-                        <p><strong>Paragraph ${state.currentParagraph + 1}:</strong></p>
-                        <p style="margin-top: 12px; line-height: 1.6;">${para}</p>
+                        <p style="margin-bottom: 8px;"><strong>📖 Paragraph ${state.currentParagraph + 1}:</strong></p>
+                        <p style="line-height: 1.8; text-align: justify;">${highlightVocabulary(para, reading.vocabularyWords)}</p>
                     </div>
+
+                    <h3 style="color: #667eea; margin: 24px 0 16px 0;">Questions:</h3>
 
                     ${questions.map((q, idx) => `
                         <div class="question-block">
